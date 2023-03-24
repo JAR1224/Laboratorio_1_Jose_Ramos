@@ -1,59 +1,118 @@
-#include <pic14/pic12f675.h>
+#include <pic14/pic12f683.h>
 
 typedef unsigned int word ;
-word __at 0x2007 __CONFIG = (_FOSC_INTRCIO, _CPD_OFF, _CP_OFF, _BOREN_OFF, _MCLRE_OFF, _PWRTE_OFF, _WDTE_OFF) ;
+word __at 0x2007 __CONFIG = (_CPD_OFF, _CP_OFF, _BOREN_OFF, _MCLRE_OFF, _PWRTE_OFF, _WDTE_OFF) ;
 
-void delay (unsigned int tiempo);
+void send_byte(unsigned int cod_7seg);
 
 void main(void)
 {
-	//GPIO0=0x07;
-	TRISIO = 0b00000000; //Poner todos los pines como salidas
-	GPIO = 0b00010111; //Poner pines en alto
+	TRISIO = 0b00001000; //P0,1,2,4,5 como salidas, P3 como entrada
+	GPIO = 0b00010000; //P4 empieza en alto (output_en del shift register)
 
-	//GPIO0=0x00;                        // make all GPIO port output
-    	//TRISIO=0x00;                     // TRISIO direction as output
 	ADCON0=0x00;                // Internal ADC OFF
     	ANSEL=0x00;
-	CMCON = 0x7;
+	CMCON0 = 0x07;
+	
+	unsigned int cod_7seg[10]={0b11111100,\	//0
+				0b01100000,\ 	//1
+				0b11011010,\	//2
+				0b11110010,\	//3
+				0b01100110,\	//4
+				0b10110110,\	//5
+				0b10111110,\	//6
+				0b11100000,\	//7
+				0b11111110,\	//8
+				0b11100110};	//9
+	
+
+	//send_byte(cod_7seg[0]);
+	//send_byte(cod_7seg[1]);
+	//send_byte(cod_7seg[2]);
+	//send_byte(cod_7seg[3]);
+	//send_byte(cod_7seg[4]);
+	//send_byte(cod_7seg[5]);
+	//send_byte(cod_7seg[6]);
+	//send_byte(cod_7seg[7]);
+	//send_byte(cod_7seg[8]);
+	//send_byte(cod_7seg[9]);
+
+	//GPIO0=0;
+
 	//GPIO1=1;
- 
-	unsigned int time = 100;
-
-
-
 	//delay(time);
-	//delay(time); 
+	//GPIO1=0;
+
+	//GPIO0=0;
+
+	//GPIO1=1;
+	//delay(time);
+	//GPIO1=0;
+
+	//GPIO0=1;
+
+	//GPIO1=1;
+	//delay(time);
+	//GPIO1=0;
+
+	//GPIO0=1;
+
+	//GPIO1=1;
+	//delay(time);
+	//GPIO1=0;
+
+	//GPIO0=0;
+
+	//GPIO1=1;
+	//delay(time);
+	//GPIO1=0;
+
+	//GPIO0=0;
+
+	//GPIO1=1;
+	//delay(time);
+	//GPIO1=0;
+
+	//GPIO0=1;
+
+	//GPIO1=1;
+	//delay(time);
+	//GPIO1=0;
+
+	//GPIO0=1;
+
+	//GPIO1=1;
+	//delay(time);
+	//GPIO1=0;
+
+	//--
+	//GPIO2=1;
+	//GPIO2=0;
+
 	//GPIO = GPIO | 0b00000010;
 
     	//Loop forever
     	while ( 1 )
     	{
 
-		delay(time);
-		delay(time);
-		//GPIO0=1;
-		//delay(time);
-		//delay(time);
-		GPIO1=1;
-		delay(time);
-		delay(time);
-		//GPIO0=0;
-		//delay(time);
-		//delay(time);
-		GPIO1=0;
+
     	}
 
-	//GPIO = GPIO | 0b00000010;
 
 }
 
 
-void delay(unsigned int tiempo)
-{
-	unsigned int i;
-	unsigned int j;
+void send_byte(unsigned int cod) {
 
-	for(i=0;i<tiempo;i++)
-	  for(j=0;j<1275;j++);
+	unsigned int bit;
+
+	for (unsigned int c = 0 ; c < 8 ; c++) {
+		bit = cod & 0x01;
+		GP0=bit;
+		GP1=1;
+		GP1=0;
+		cod>>=1;
+	}
+	GP2=1;
+	GP2=0;
 }

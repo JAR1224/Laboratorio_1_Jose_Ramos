@@ -1,6 +1,6 @@
 gplink-1.4.0 #1107 (Apr  3 2018)
 Copyright (c) 1998-2014 gputils project
-Listing File Generated: 3-23-2023  18:30:13
+Listing File Generated: 3-24-2023  15:52:03
  
  
 Address  Value    Disassembly              Source
@@ -12,14 +12,14 @@ Address  Value    Disassembly              Source
                                            ; PIC port for the 14-bit core
                                            ;--------------------------------------------------------
                                            ;	.file	"laboratorio_1.c"
-                                           	list	p=12f675
+                                           	list	p=12f683
                                            	radix dec
-                                           	include "p12f675.inc"
+                                           	include "p12f683.inc"
                                                    LIST
                                            
                                            ;==========================================================================
                                            ; Build date : Aug 07 2014
-                                           ;  MPASM PIC12F675 processor include
+                                           ;  MPASM PIC12F683 processor include
                                            ; 
                                            ;  (c) Copyright 1999-2014 Microchip Technology, All rights reserved
                                            ;==========================================================================
@@ -35,7 +35,7 @@ Address  Value    Disassembly              Source
                                            	extern	_ANSEL
                                            	extern	_TRISIO
                                            	extern	_ADCON0
-                                           	extern	_CMCON
+                                           	extern	_CMCON0
                                            	extern	_GPIO
                                            	extern	_GPIObits
                                            	extern	__sdcc_gsinit_startup
@@ -43,7 +43,7 @@ Address  Value    Disassembly              Source
                                            ; global declarations
                                            ;--------------------------------------------------------
                                            	global	_main
-                                           	global	_delay
+                                           	global	_send_byte
                                            
                                            	global PSAVE
                                            	global SSAVE
@@ -62,7 +62,7 @@ Address  Value    Disassembly              Source
                                            	global STK01
                                            	global STK00
                                            
-                                           sharebank udata_ovr 0x0020
+                                           sharebank udata_ovr 0x0070
                                            PSAVE	res 1
                                            SSAVE	res 1
                                            WSAVE	res 1
@@ -90,14 +90,14 @@ Address  Value    Disassembly              Source
                                            ; compiler-defined variables
                                            ;--------------------------------------------------------
                                            UDL_laboratorio_1_0	udata
-                                           r0x1001	res	1
-                                           r0x1000	res	1
-                                           r0x1002	res	1
-                                           r0x1003	res	1
-                                           r0x1004	res	1
-                                           r0x1005	res	1
-                                           r0x1006	res	1
-                                           r0x1007	res	1
+                                           r0x1019	res	1
+                                           r0x101A	res	1
+                                           r0x1015	res	1
+                                           r0x1014	res	1
+                                           r0x1016	res	1
+                                           r0x1017	res	1
+                                           r0x1018	res	1
+                                           _main_cod_7seg_65537_4	res	20
                                            ;--------------------------------------------------------
                                            ; initialized data
                                            ;--------------------------------------------------------
@@ -124,147 +124,186 @@ Address  Value    Disassembly              Source
                                            ;***
                                            ;has an exit
                                            ;functions called:
-                                           ;   _delay
-                                           ;   _delay
-                                           ;   _delay
-                                           ;   _delay
-                                           ;   _delay
-                                           ;   _delay
-                                           ;   _delay
-                                           ;   _delay
-                                           ;1 compiler assigned register :
+                                           ;   _send_byte
+                                           ;   _send_byte
+                                           ;3 compiler assigned registers:
+                                           ;   r0x1019
+                                           ;   r0x101A
                                            ;   STK00
                                            ;; Starting pCode block
                                            S_laboratorio_1__main	code
                                            _main:
                                            ; 2 exit points
-                                           ;	.line	11; "laboratorio_1.c"	TRISIO = 0b00000000; //Poner todos los pines como salidas
-0000f9   1683     bsf     0x03, 0x5        	BANKSEL	_TRISIO
-0000fa   0185     clrf    0x05             	CLRF	_TRISIO
-                                           ;	.line	12; "laboratorio_1.c"	GPIO = 0b00010111; //Poner pines en alto
-0000fb   3017     movlw   0x17             	MOVLW	0x17
-0000fc   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
-0000fd   0085     movwf   0x05             	MOVWF	_GPIO
-                                           ;	.line	16; "laboratorio_1.c"	ADCON0=0x00;                // Internal ADC OFF
-0000fe   019f     clrf    0x1f             	CLRF	_ADCON0
-                                           ;	.line	17; "laboratorio_1.c"	ANSEL=0x00;
-0000ff   1683     bsf     0x03, 0x5        	BANKSEL	_ANSEL
-000100   019f     clrf    0x1f             	CLRF	_ANSEL
-                                           ;	.line	18; "laboratorio_1.c"	CMCON = 0x7;
-000101   3007     movlw   0x07             	MOVLW	0x07
-000102   1283     bcf     0x03, 0x5        	BANKSEL	_CMCON
-000103   0099     movwf   0x19             	MOVWF	_CMCON
+                                           ;	.line	10; "laboratorio_1.c"	TRISIO = 0b00001000; //P0,1,2,4,5 como salidas, P3 como entrada
+00009e   3008     movlw   0x08             	MOVLW	0x08
+00009f   1683     bsf     0x03, 0x5        	BANKSEL	_TRISIO
+0000a0   0085     movwf   0x05             	MOVWF	_TRISIO
+                                           ;	.line	11; "laboratorio_1.c"	GPIO = 0b00010000; //P4 empieza en alto (output_en del shift register)
+0000a1   3010     movlw   0x10             	MOVLW	0x10
+0000a2   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0000a3   0085     movwf   0x05             	MOVWF	_GPIO
+                                           ;	.line	13; "laboratorio_1.c"	ADCON0=0x00;                // Internal ADC OFF
+0000a4   019f     clrf    0x1f             	CLRF	_ADCON0
+                                           ;	.line	14; "laboratorio_1.c"	ANSEL=0x00;
+0000a5   1683     bsf     0x03, 0x5        	BANKSEL	_ANSEL
+0000a6   019f     clrf    0x1f             	CLRF	_ANSEL
+                                           ;	.line	15; "laboratorio_1.c"	CMCON0 = 0x07;
+0000a7   3007     movlw   0x07             	MOVLW	0x07
+0000a8   1283     bcf     0x03, 0x5        	BANKSEL	_CMCON0
+0000a9   0099     movwf   0x19             	MOVWF	_CMCON0
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+                                           ;	.line	17; "laboratorio_1.c"	unsigned int cod_7seg[10]={0b11111100,\	//0
+0000aa   30fc     movlw   0xfc             	MOVLW	0xfc
+0000ab   1683     bsf     0x03, 0x5        	BANKSEL	_main_cod_7seg_65537_4
+0000ac   00a7     movwf   0x27             	MOVWF	(_main_cod_7seg_65537_4 + 0)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+0000ad   01a8     clrf    0x28             	CLRF	(_main_cod_7seg_65537_4 + 1)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+0000ae   3060     movlw   0x60             	MOVLW	0x60
+0000af   00a9     movwf   0x29             	MOVWF	(_main_cod_7seg_65537_4 + 2)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+0000b0   01aa     clrf    0x2a             	CLRF	(_main_cod_7seg_65537_4 + 3)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+0000b1   30da     movlw   0xda             	MOVLW	0xda
+0000b2   00ab     movwf   0x2b             	MOVWF	(_main_cod_7seg_65537_4 + 4)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+0000b3   01ac     clrf    0x2c             	CLRF	(_main_cod_7seg_65537_4 + 5)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+0000b4   30f2     movlw   0xf2             	MOVLW	0xf2
+0000b5   00ad     movwf   0x2d             	MOVWF	(_main_cod_7seg_65537_4 + 6)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+0000b6   01ae     clrf    0x2e             	CLRF	(_main_cod_7seg_65537_4 + 7)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+0000b7   3066     movlw   0x66             	MOVLW	0x66
+0000b8   00af     movwf   0x2f             	MOVWF	(_main_cod_7seg_65537_4 + 8)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+0000b9   01b0     clrf    0x30             	CLRF	(_main_cod_7seg_65537_4 + 9)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+0000ba   30b6     movlw   0xb6             	MOVLW	0xb6
+0000bb   00b1     movwf   0x31             	MOVWF	(_main_cod_7seg_65537_4 + 10)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+0000bc   01b2     clrf    0x32             	CLRF	(_main_cod_7seg_65537_4 + 11)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+0000bd   30be     movlw   0xbe             	MOVLW	0xbe
+0000be   00b3     movwf   0x33             	MOVWF	(_main_cod_7seg_65537_4 + 12)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+0000bf   01b4     clrf    0x34             	CLRF	(_main_cod_7seg_65537_4 + 13)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+0000c0   30e0     movlw   0xe0             	MOVLW	0xe0
+0000c1   00b5     movwf   0x35             	MOVWF	(_main_cod_7seg_65537_4 + 14)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+0000c2   01b6     clrf    0x36             	CLRF	(_main_cod_7seg_65537_4 + 15)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+0000c3   30fe     movlw   0xfe             	MOVLW	0xfe
+0000c4   00b7     movwf   0x37             	MOVWF	(_main_cod_7seg_65537_4 + 16)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+0000c5   01b8     clrf    0x38             	CLRF	(_main_cod_7seg_65537_4 + 17)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+0000c6   30e6     movlw   0xe6             	MOVLW	0xe6
+0000c7   00b9     movwf   0x39             	MOVWF	(_main_cod_7seg_65537_4 + 18)
+                                           ;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+0000c8   01ba     clrf    0x3a             	CLRF	(_main_cod_7seg_65537_4 + 19)
+                                           ;	.line	35; "laboratorio_1.c"	send_byte(cod_7seg[6]);
+0000c9   0833     movf    0x33, 0x0        	MOVF	(_main_cod_7seg_65537_4 + 12),W
+0000ca   1683     bsf     0x03, 0x5        	BANKSEL	r0x1019
+0000cb   00a0     movwf   0x20             	MOVWF	r0x1019
+0000cc   1683     bsf     0x03, 0x5        	BANKSEL	_main_cod_7seg_65537_4
+0000cd   0834     movf    0x34, 0x0        	MOVF	(_main_cod_7seg_65537_4 + 13),W
+0000ce   1683     bsf     0x03, 0x5        	BANKSEL	r0x101A
+0000cf   00a1     movwf   0x21             	MOVWF	r0x101A
+0000d0   0820     movf    0x20, 0x0        	MOVF	r0x1019,W
+0000d1   00ff     movwf   0x7f             	MOVWF	STK00
+0000d2   0821     movf    0x21, 0x0        	MOVF	r0x101A,W
+                                           	PAGESEL	_send_byte
+0000d3   210a     call    0x010a           	CALL	_send_byte
+                                           	PAGESEL	$
                                            _00106_DS_:
-                                           ;	.line	33; "laboratorio_1.c"	delay(time);
-000104   3064     movlw   0x64             	MOVLW	0x64
-000105   00af     movwf   0x2f             	MOVWF	STK00
-000106   3000     movlw   0x00             	MOVLW	0x00
-                                           	PAGESEL	_delay
-000107   20d2     call    0x00d2           	CALL	_delay
-                                           	PAGESEL	$
-                                           ;	.line	34; "laboratorio_1.c"	delay(time);
-000108   3064     movlw   0x64             	MOVLW	0x64
-000109   00af     movwf   0x2f             	MOVWF	STK00
-00010a   3000     movlw   0x00             	MOVLW	0x00
-                                           	PAGESEL	_delay
-00010b   20d2     call    0x00d2           	CALL	_delay
-                                           	PAGESEL	$
-                                           ;	.line	38; "laboratorio_1.c"	GPIO1=1;
-00010c   1283     bcf     0x03, 0x5        	BANKSEL	_GPIObits
-00010d   1485     bsf     0x05, 0x1        	BSF	_GPIObits,1
-                                           ;	.line	39; "laboratorio_1.c"	delay(time);
-00010e   3064     movlw   0x64             	MOVLW	0x64
-00010f   00af     movwf   0x2f             	MOVWF	STK00
-000110   3000     movlw   0x00             	MOVLW	0x00
-                                           	PAGESEL	_delay
-000111   20d2     call    0x00d2           	CALL	_delay
-                                           	PAGESEL	$
-                                           ;	.line	40; "laboratorio_1.c"	delay(time);
-000112   3064     movlw   0x64             	MOVLW	0x64
-000113   00af     movwf   0x2f             	MOVWF	STK00
-000114   3000     movlw   0x00             	MOVLW	0x00
-                                           	PAGESEL	_delay
-000115   20d2     call    0x00d2           	CALL	_delay
-                                           	PAGESEL	$
-                                           ;	.line	44; "laboratorio_1.c"	GPIO1=0;
-000116   1283     bcf     0x03, 0x5        	BANKSEL	_GPIObits
-000117   1085     bcf     0x05, 0x1        	BCF	_GPIObits,1
-000118   2904     goto    0x0104           	GOTO	_00106_DS_
-                                           ;	.line	49; "laboratorio_1.c"	}
-000119   0008     return                   	RETURN	
+                                           ;	.line	95; "laboratorio_1.c"	while ( 1 )
+0000d4   28d4     goto    0x00d4           	GOTO	_00106_DS_
+                                           ;	.line	102; "laboratorio_1.c"	}
+0000d5   0008     return                   	RETURN	
                                            ; exit point of _main
                                            
                                            ;***
                                            ;  pBlock Stats: dbName = C
                                            ;***
                                            ;has an exit
-                                           ;9 compiler assigned registers:
-                                           ;   r0x1000
+                                           ;6 compiler assigned registers:
+                                           ;   r0x1014
                                            ;   STK00
-                                           ;   r0x1001
-                                           ;   r0x1002
-                                           ;   r0x1003
-                                           ;   r0x1004
-                                           ;   r0x1005
-                                           ;   r0x1006
-                                           ;   r0x1007
+                                           ;   r0x1015
+                                           ;   r0x1016
+                                           ;   r0x1017
+                                           ;   r0x1018
                                            ;; Starting pCode block
-                                           S_laboratorio_1__delay	code
-                                           _delay:
+                                           S_laboratorio_1__send_byte	code
+                                           _send_byte:
                                            ; 2 exit points
-                                           ;	.line	52; "laboratorio_1.c"	void delay(unsigned int tiempo)
-0000d2   00bd     movwf   0x3d             	MOVWF	r0x1000
-0000d3   082f     movf    0x2f, 0x0        	MOVF	STK00,W
-0000d4   00bc     movwf   0x3c             	MOVWF	r0x1001
-                                           ;	.line	57; "laboratorio_1.c"	for(i=0;i<tiempo;i++)
-0000d5   01be     clrf    0x3e             	CLRF	r0x1002
-0000d6   01bf     clrf    0x3f             	CLRF	r0x1003
-                                           _00117_DS_:
-0000d7   083d     movf    0x3d, 0x0        	MOVF	r0x1000,W
-0000d8   023f     subwf   0x3f, 0x0        	SUBWF	r0x1003,W
-0000d9   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
-0000da   28dd     goto    0x00dd           	GOTO	_00138_DS_
-0000db   083c     movf    0x3c, 0x0        	MOVF	r0x1001,W
-0000dc   023e     subwf   0x3e, 0x0        	SUBWF	r0x1002,W
-                                           _00138_DS_:
-0000dd   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
-0000de   28f8     goto    0x00f8           	GOTO	_00119_DS_
-                                           ;;genSkipc:3307: created from rifx:0x7ffe50bc5e40
-                                           ;	.line	58; "laboratorio_1.c"	for(j=0;j<1275;j++);
-0000df   30fb     movlw   0xfb             	MOVLW	0xfb
-0000e0   00c0     movwf   0x40             	MOVWF	r0x1004
-0000e1   3004     movlw   0x04             	MOVLW	0x04
-0000e2   00c1     movwf   0x41             	MOVWF	r0x1005
-                                           _00115_DS_:
-0000e3   30ff     movlw   0xff             	MOVLW	0xff
-0000e4   0740     addwf   0x40, 0x0        	ADDWF	r0x1004,W
-0000e5   00c2     movwf   0x42             	MOVWF	r0x1006
-0000e6   30ff     movlw   0xff             	MOVLW	0xff
-0000e7   00c3     movwf   0x43             	MOVWF	r0x1007
-0000e8   0841     movf    0x41, 0x0        	MOVF	r0x1005,W
-0000e9   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
-0000ea   0f41     incfsz  0x41, 0x0        	INCFSZ	r0x1005,W
-0000eb   07c3     addwf   0x43, 0x1        	ADDWF	r0x1007,F
-0000ec   0842     movf    0x42, 0x0        	MOVF	r0x1006,W
-0000ed   00c0     movwf   0x40             	MOVWF	r0x1004
-0000ee   0843     movf    0x43, 0x0        	MOVF	r0x1007,W
-0000ef   00c1     movwf   0x41             	MOVWF	r0x1005
-0000f0   0843     movf    0x43, 0x0        	MOVF	r0x1007,W
-0000f1   0442     iorwf   0x42, 0x0        	IORWF	r0x1006,W
-0000f2   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
-0000f3   28e3     goto    0x00e3           	GOTO	_00115_DS_
-                                           ;	.line	57; "laboratorio_1.c"	for(i=0;i<tiempo;i++)
-0000f4   0abe     incf    0x3e, 0x1        	INCF	r0x1002,F
-0000f5   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
-0000f6   0abf     incf    0x3f, 0x1        	INCF	r0x1003,F
-0000f7   28d7     goto    0x00d7           	GOTO	_00117_DS_
-                                           _00119_DS_:
-                                           ;	.line	59; "laboratorio_1.c"	}
-0000f8   0008     return                   	RETURN	
-                                           ; exit point of _delay
+                                           ;	.line	105; "laboratorio_1.c"	void send_byte(unsigned int cod) {
+00010a   1683     bsf     0x03, 0x5        	BANKSEL	r0x1014
+00010b   00a3     movwf   0x23             	MOVWF	r0x1014
+00010c   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+00010d   00a2     movwf   0x22             	MOVWF	r0x1015
+                                           ;	.line	109; "laboratorio_1.c"	for (unsigned int c = 0 ; c < 8 ; c++) {
+00010e   01a4     clrf    0x24             	CLRF	r0x1016
+00010f   01a5     clrf    0x25             	CLRF	r0x1017
+                                           ;;unsigned compare: left < lit(0x8=8), size=2
+                                           _00113_DS_:
+000110   3000     movlw   0x00             	MOVLW	0x00
+000111   1683     bsf     0x03, 0x5        	BANKSEL	r0x1017
+000112   0225     subwf   0x25, 0x0        	SUBWF	r0x1017,W
+000113   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000114   2917     goto    0x0117           	GOTO	_00126_DS_
+000115   3008     movlw   0x08             	MOVLW	0x08
+000116   0224     subwf   0x24, 0x0        	SUBWF	r0x1016,W
+                                           _00126_DS_:
+000117   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+000118   2930     goto    0x0130           	GOTO	_00111_DS_
+                                           ;;genSkipc:3307: created from rifx:0x7ffcee608860
+                                           ;	.line	110; "laboratorio_1.c"	bit = cod & 0x01;
+000119   1683     bsf     0x03, 0x5        	BANKSEL	r0x1015
+00011a   0822     movf    0x22, 0x0        	MOVF	r0x1015,W
+00011b   00a6     movwf   0x26             	MOVWF	r0x1018
+                                           ;	.line	111; "laboratorio_1.c"	GP0=bit;
+00011c   0c26     rrf     0x26, 0x0        	RRF	r0x1018,W
+00011d   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+00011e   2921     goto    0x0121           	GOTO	_00001_DS_
+00011f   1283     bcf     0x03, 0x5        	BANKSEL	_GPIObits
+000120   1005     bcf     0x05, 0x0        	BCF	_GPIObits,0
+                                           _00001_DS_:
+000121   1c03     btfss   0x03, 0x0        	BTFSS	STATUS,0
+000122   2925     goto    0x0125           	GOTO	_00002_DS_
+000123   1283     bcf     0x03, 0x5        	BANKSEL	_GPIObits
+000124   1405     bsf     0x05, 0x0        	BSF	_GPIObits,0
+                                           _00002_DS_:
+                                           ;	.line	112; "laboratorio_1.c"	GP1=1;
+000125   1283     bcf     0x03, 0x5        	BANKSEL	_GPIObits
+000126   1485     bsf     0x05, 0x1        	BSF	_GPIObits,1
+                                           ;	.line	113; "laboratorio_1.c"	GP1=0;
+000127   1085     bcf     0x05, 0x1        	BCF	_GPIObits,1
+                                           ;;shiftRight_Left2ResultLit:5474: shCount=1, size=2, sign=0, same=1, offr=0
+                                           ;	.line	114; "laboratorio_1.c"	cod>>=1;
+000128   1003     bcf     0x03, 0x0        	BCF	STATUS,0
+000129   1683     bsf     0x03, 0x5        	BANKSEL	r0x1014
+00012a   0ca3     rrf     0x23, 0x1        	RRF	r0x1014,F
+00012b   0ca2     rrf     0x22, 0x1        	RRF	r0x1015,F
+                                           ;	.line	109; "laboratorio_1.c"	for (unsigned int c = 0 ; c < 8 ; c++) {
+00012c   0aa4     incf    0x24, 0x1        	INCF	r0x1016,F
+00012d   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+00012e   0aa5     incf    0x25, 0x1        	INCF	r0x1017,F
+00012f   2910     goto    0x0110           	GOTO	_00113_DS_
+                                           _00111_DS_:
+                                           ;	.line	116; "laboratorio_1.c"	GP2=1;
+000130   1283     bcf     0x03, 0x5        	BANKSEL	_GPIObits
+000131   1505     bsf     0x05, 0x2        	BSF	_GPIObits,2
+                                           ;	.line	117; "laboratorio_1.c"	GP2=0;
+000132   1105     bcf     0x05, 0x2        	BCF	_GPIObits,2
+                                           ;	.line	118; "laboratorio_1.c"	}
+000133   0008     return                   	RETURN	
+                                           ; exit point of _send_byte
                                            
                                            
                                            ;	code size estimation:
-                                           ;	   66+   14 =    80 instructions (  188 byte)
+                                           ;	   82+   18 =   100 instructions (  236 byte)
                                            
                                            	end

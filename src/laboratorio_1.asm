@@ -5,9 +5,9 @@
 ; PIC port for the 14-bit core
 ;--------------------------------------------------------
 ;	.file	"laboratorio_1.c"
-	list	p=12f675
+	list	p=12f683
 	radix dec
-	include "p12f675.inc"
+	include "p12f683.inc"
 ;--------------------------------------------------------
 ; config word(s)
 ;--------------------------------------------------------
@@ -18,7 +18,7 @@
 	extern	_ANSEL
 	extern	_TRISIO
 	extern	_ADCON0
-	extern	_CMCON
+	extern	_CMCON0
 	extern	_GPIO
 	extern	_GPIObits
 	extern	__sdcc_gsinit_startup
@@ -26,7 +26,7 @@
 ; global declarations
 ;--------------------------------------------------------
 	global	_main
-	global	_delay
+	global	_send_byte
 
 	global PSAVE
 	global SSAVE
@@ -45,7 +45,7 @@
 	global STK01
 	global STK00
 
-sharebank udata_ovr 0x0020
+sharebank udata_ovr 0x0070
 PSAVE	res 1
 SSAVE	res 1
 WSAVE	res 1
@@ -73,14 +73,14 @@ STK00	res 1
 ; compiler-defined variables
 ;--------------------------------------------------------
 UDL_laboratorio_1_0	udata
-r0x1001	res	1
-r0x1000	res	1
-r0x1002	res	1
-r0x1003	res	1
-r0x1004	res	1
-r0x1005	res	1
-r0x1006	res	1
-r0x1007	res	1
+r0x1019	res	1
+r0x101A	res	1
+r0x1015	res	1
+r0x1014	res	1
+r0x1016	res	1
+r0x1017	res	1
+r0x1018	res	1
+_main_cod_7seg_65537_4	res	20
 ;--------------------------------------------------------
 ; initialized data
 ;--------------------------------------------------------
@@ -107,73 +107,103 @@ code_laboratorio_1	code
 ;***
 ;has an exit
 ;functions called:
-;   _delay
-;   _delay
-;   _delay
-;   _delay
-;   _delay
-;   _delay
-;   _delay
-;   _delay
-;1 compiler assigned register :
+;   _send_byte
+;   _send_byte
+;3 compiler assigned registers:
+;   r0x1019
+;   r0x101A
 ;   STK00
 ;; Starting pCode block
 S_laboratorio_1__main	code
 _main:
 ; 2 exit points
-;	.line	11; "laboratorio_1.c"	TRISIO = 0b00000000; //Poner todos los pines como salidas
+;	.line	10; "laboratorio_1.c"	TRISIO = 0b00001000; //P0,1,2,4,5 como salidas, P3 como entrada
+	MOVLW	0x08
 	BANKSEL	_TRISIO
-	CLRF	_TRISIO
-;	.line	12; "laboratorio_1.c"	GPIO = 0b00010111; //Poner pines en alto
-	MOVLW	0x17
+	MOVWF	_TRISIO
+;	.line	11; "laboratorio_1.c"	GPIO = 0b00010000; //P4 empieza en alto (output_en del shift register)
+	MOVLW	0x10
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-;	.line	16; "laboratorio_1.c"	ADCON0=0x00;                // Internal ADC OFF
+;	.line	13; "laboratorio_1.c"	ADCON0=0x00;                // Internal ADC OFF
 	CLRF	_ADCON0
-;	.line	17; "laboratorio_1.c"	ANSEL=0x00;
+;	.line	14; "laboratorio_1.c"	ANSEL=0x00;
 	BANKSEL	_ANSEL
 	CLRF	_ANSEL
-;	.line	18; "laboratorio_1.c"	CMCON = 0x7;
+;	.line	15; "laboratorio_1.c"	CMCON0 = 0x07;
 	MOVLW	0x07
-	BANKSEL	_CMCON
-	MOVWF	_CMCON
+	BANKSEL	_CMCON0
+	MOVWF	_CMCON0
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	17; "laboratorio_1.c"	unsigned int cod_7seg[10]={0b11111100,\	//0
+	MOVLW	0xfc
+	BANKSEL	_main_cod_7seg_65537_4
+	MOVWF	(_main_cod_7seg_65537_4 + 0)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_main_cod_7seg_65537_4 + 1)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+	MOVLW	0x60
+	MOVWF	(_main_cod_7seg_65537_4 + 2)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_main_cod_7seg_65537_4 + 3)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+	MOVLW	0xda
+	MOVWF	(_main_cod_7seg_65537_4 + 4)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_main_cod_7seg_65537_4 + 5)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+	MOVLW	0xf2
+	MOVWF	(_main_cod_7seg_65537_4 + 6)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_main_cod_7seg_65537_4 + 7)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+	MOVLW	0x66
+	MOVWF	(_main_cod_7seg_65537_4 + 8)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_main_cod_7seg_65537_4 + 9)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+	MOVLW	0xb6
+	MOVWF	(_main_cod_7seg_65537_4 + 10)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_main_cod_7seg_65537_4 + 11)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+	MOVLW	0xbe
+	MOVWF	(_main_cod_7seg_65537_4 + 12)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_main_cod_7seg_65537_4 + 13)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+	MOVLW	0xe0
+	MOVWF	(_main_cod_7seg_65537_4 + 14)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_main_cod_7seg_65537_4 + 15)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+	MOVLW	0xfe
+	MOVWF	(_main_cod_7seg_65537_4 + 16)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_main_cod_7seg_65537_4 + 17)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+	MOVLW	0xe6
+	MOVWF	(_main_cod_7seg_65537_4 + 18)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_main_cod_7seg_65537_4 + 19)
+;	.line	35; "laboratorio_1.c"	send_byte(cod_7seg[6]);
+	MOVF	(_main_cod_7seg_65537_4 + 12),W
+	BANKSEL	r0x1019
+	MOVWF	r0x1019
+	BANKSEL	_main_cod_7seg_65537_4
+	MOVF	(_main_cod_7seg_65537_4 + 13),W
+	BANKSEL	r0x101A
+	MOVWF	r0x101A
+	MOVF	r0x1019,W
+	MOVWF	STK00
+	MOVF	r0x101A,W
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
 _00106_DS_:
-;	.line	33; "laboratorio_1.c"	delay(time);
-	MOVLW	0x64
-	MOVWF	STK00
-	MOVLW	0x00
-	PAGESEL	_delay
-	CALL	_delay
-	PAGESEL	$
-;	.line	34; "laboratorio_1.c"	delay(time);
-	MOVLW	0x64
-	MOVWF	STK00
-	MOVLW	0x00
-	PAGESEL	_delay
-	CALL	_delay
-	PAGESEL	$
-;	.line	38; "laboratorio_1.c"	GPIO1=1;
-	BANKSEL	_GPIObits
-	BSF	_GPIObits,1
-;	.line	39; "laboratorio_1.c"	delay(time);
-	MOVLW	0x64
-	MOVWF	STK00
-	MOVLW	0x00
-	PAGESEL	_delay
-	CALL	_delay
-	PAGESEL	$
-;	.line	40; "laboratorio_1.c"	delay(time);
-	MOVLW	0x64
-	MOVWF	STK00
-	MOVLW	0x00
-	PAGESEL	_delay
-	CALL	_delay
-	PAGESEL	$
-;	.line	44; "laboratorio_1.c"	GPIO1=0;
-	BANKSEL	_GPIObits
-	BCF	_GPIObits,1
+;	.line	95; "laboratorio_1.c"	while ( 1 )
 	GOTO	_00106_DS_
-;	.line	49; "laboratorio_1.c"	}
+;	.line	102; "laboratorio_1.c"	}
 	RETURN	
 ; exit point of _main
 
@@ -181,73 +211,82 @@ _00106_DS_:
 ;  pBlock Stats: dbName = C
 ;***
 ;has an exit
-;9 compiler assigned registers:
-;   r0x1000
+;6 compiler assigned registers:
+;   r0x1014
 ;   STK00
-;   r0x1001
-;   r0x1002
-;   r0x1003
-;   r0x1004
-;   r0x1005
-;   r0x1006
-;   r0x1007
+;   r0x1015
+;   r0x1016
+;   r0x1017
+;   r0x1018
 ;; Starting pCode block
-S_laboratorio_1__delay	code
-_delay:
+S_laboratorio_1__send_byte	code
+_send_byte:
 ; 2 exit points
-;	.line	52; "laboratorio_1.c"	void delay(unsigned int tiempo)
-	MOVWF	r0x1000
+;	.line	105; "laboratorio_1.c"	void send_byte(unsigned int cod) {
+	BANKSEL	r0x1014
+	MOVWF	r0x1014
 	MOVF	STK00,W
-	MOVWF	r0x1001
-;	.line	57; "laboratorio_1.c"	for(i=0;i<tiempo;i++)
-	CLRF	r0x1002
-	CLRF	r0x1003
-_00117_DS_:
-	MOVF	r0x1000,W
-	SUBWF	r0x1003,W
+	MOVWF	r0x1015
+;	.line	109; "laboratorio_1.c"	for (unsigned int c = 0 ; c < 8 ; c++) {
+	CLRF	r0x1016
+	CLRF	r0x1017
+;;unsigned compare: left < lit(0x8=8), size=2
+_00113_DS_:
+	MOVLW	0x00
+	BANKSEL	r0x1017
+	SUBWF	r0x1017,W
 	BTFSS	STATUS,2
-	GOTO	_00138_DS_
-	MOVF	r0x1001,W
-	SUBWF	r0x1002,W
-_00138_DS_:
+	GOTO	_00126_DS_
+	MOVLW	0x08
+	SUBWF	r0x1016,W
+_00126_DS_:
 	BTFSC	STATUS,0
-	GOTO	_00119_DS_
-;;genSkipc:3307: created from rifx:0x7ffe50bc5e40
-;	.line	58; "laboratorio_1.c"	for(j=0;j<1275;j++);
-	MOVLW	0xfb
-	MOVWF	r0x1004
-	MOVLW	0x04
-	MOVWF	r0x1005
-_00115_DS_:
-	MOVLW	0xff
-	ADDWF	r0x1004,W
-	MOVWF	r0x1006
-	MOVLW	0xff
-	MOVWF	r0x1007
-	MOVF	r0x1005,W
+	GOTO	_00111_DS_
+;;genSkipc:3307: created from rifx:0x7ffcee608860
+;	.line	110; "laboratorio_1.c"	bit = cod & 0x01;
+	BANKSEL	r0x1015
+	MOVF	r0x1015,W
+	MOVWF	r0x1018
+;	.line	111; "laboratorio_1.c"	GP0=bit;
+	RRF	r0x1018,W
 	BTFSC	STATUS,0
-	INCFSZ	r0x1005,W
-	ADDWF	r0x1007,F
-	MOVF	r0x1006,W
-	MOVWF	r0x1004
-	MOVF	r0x1007,W
-	MOVWF	r0x1005
-	MOVF	r0x1007,W
-	IORWF	r0x1006,W
-	BTFSS	STATUS,2
-	GOTO	_00115_DS_
-;	.line	57; "laboratorio_1.c"	for(i=0;i<tiempo;i++)
-	INCF	r0x1002,F
+	GOTO	_00001_DS_
+	BANKSEL	_GPIObits
+	BCF	_GPIObits,0
+_00001_DS_:
+	BTFSS	STATUS,0
+	GOTO	_00002_DS_
+	BANKSEL	_GPIObits
+	BSF	_GPIObits,0
+_00002_DS_:
+;	.line	112; "laboratorio_1.c"	GP1=1;
+	BANKSEL	_GPIObits
+	BSF	_GPIObits,1
+;	.line	113; "laboratorio_1.c"	GP1=0;
+	BCF	_GPIObits,1
+;;shiftRight_Left2ResultLit:5474: shCount=1, size=2, sign=0, same=1, offr=0
+;	.line	114; "laboratorio_1.c"	cod>>=1;
+	BCF	STATUS,0
+	BANKSEL	r0x1014
+	RRF	r0x1014,F
+	RRF	r0x1015,F
+;	.line	109; "laboratorio_1.c"	for (unsigned int c = 0 ; c < 8 ; c++) {
+	INCF	r0x1016,F
 	BTFSC	STATUS,2
-	INCF	r0x1003,F
-	GOTO	_00117_DS_
-_00119_DS_:
-;	.line	59; "laboratorio_1.c"	}
+	INCF	r0x1017,F
+	GOTO	_00113_DS_
+_00111_DS_:
+;	.line	116; "laboratorio_1.c"	GP2=1;
+	BANKSEL	_GPIObits
+	BSF	_GPIObits,2
+;	.line	117; "laboratorio_1.c"	GP2=0;
+	BCF	_GPIObits,2
+;	.line	118; "laboratorio_1.c"	}
 	RETURN	
-; exit point of _delay
+; exit point of _send_byte
 
 
 ;	code size estimation:
-;	   66+   14 =    80 instructions (  188 byte)
+;	   82+   18 =   100 instructions (  236 byte)
 
 	end
