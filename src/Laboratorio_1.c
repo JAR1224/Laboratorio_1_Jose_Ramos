@@ -5,10 +5,14 @@ word __at 0x2007 __CONFIG = (_CPD_OFF, _CP_OFF, _BOREN_OFF, _MCLRE_OFF, _PWRTE_O
 
 void send_byte(unsigned int cod_7seg);
 
+unsigned int wait();
+
+unsigned int banderas=0b00000000;
+
 void main(void)
 {
-	TRISIO = 0b00001000; //P0,1,2,4,5 como salidas, P3 como entrada
-	GPIO = 0b00010000; //P4 empieza en alto (output_en del shift register)
+	TRISIO = 0b00101000; //P0,1,2,4 como salidas, P3,5 como entrada
+	GPIO = 0b00000000; //Pines empiezan en bajo
 
 	ADCON0=0x00;                // Internal ADC OFF
     	ANSEL=0x00;
@@ -95,6 +99,7 @@ void main(void)
     	while ( 1 )
     	{
 
+		send_byte(wait() & 0x07);
 
     	}
 
@@ -115,4 +120,22 @@ void send_byte(unsigned int cod) {
 	}
 	GP2=1;
 	GP2=0;
+}
+
+unsigned int wait() {
+
+	unsigned int rand = 0;
+	while(1) {
+		if ( (banderas==0x00) &&  (GP3==1) ) {
+			banderas = 0x01;
+			GP4=GP3;
+			return rand;
+		} else if ( (banderas==0x01) &&  (GP3==0) ) {
+			banderas = 0x00;
+			GP4=GP3;
+		}
+		rand+=1;
+		
+	}
+
 }
