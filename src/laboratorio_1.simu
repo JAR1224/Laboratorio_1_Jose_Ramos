@@ -26,7 +26,7 @@ Circuit Id: Resistor-696
 
 Unique  Id: Resistor-4588: 
 Circuit Id: Resistor-696
-<item valLabely="6" id="Resistor-696" labelx="-12" Show_id="false" boardRot="-1e+06" mainComp="false" valLabelx="-16" valLabRot="0" y="-184" rotation="0" Unit=" kΩ" labely="-20" itemtype="Resistor" x="-568" vflip="1" Show_res="true" labelrot="0" circPos="0,0" hflip="1" Resistance="100" circRot="5e-324" boardPos="-1e+06,-1e+06" objectName="Resistor-4588"/>
+<item valLabely="6" id="Resistor-696" labelx="-12" Show_id="false" boardRot="-1e+06" mainComp="false" valLabelx="-16" valLabRot="0" y="-184" rotation="0" Unit=" kΩ" labely="-20" itemtype="Resistor" x="-568" vflip="1" Show_res="true" labelrot="0" circPos="0,0" hflip="1" Resistance="50" circRot="5e-324" boardPos="-1e+06,-1e+06" objectName="Resistor-4588"/>
 
 Unique  Id: Ground-4586: 
 Circuit Id: Ground-93
