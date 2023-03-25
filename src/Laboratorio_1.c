@@ -1,13 +1,19 @@
 #include <pic14/pic12f683.h>
 
+/* notes
+1) quitar tabla cod_7seg y guardar valores en la codificacion de las instrucciones
+2) manejar rand en bcd desde el principio
+*/
+
 typedef unsigned int word ;
 word __at 0x2007 __CONFIG = (_CPD_OFF, _CP_OFF, _BOREN_OFF, _MCLRE_OFF, _PWRTE_OFF, _WDTE_OFF) ;
 
 void send_byte(unsigned int cod_7seg);
+unsigned int valido(unsigned int valor);
+unsigned int rand_wait();
 
-unsigned int wait();
-
-unsigned int banderas=0b00000000;
+unsigned int banderas = 0b00000000;
+unsigned int historial[8]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 
 void main(void)
 {
@@ -28,81 +34,14 @@ void main(void)
 				0b11100000,\	//7
 				0b11111110,\	//8
 				0b11100110};	//9
-	
-
-	//send_byte(cod_7seg[0]);
-	//send_byte(cod_7seg[1]);
-	//send_byte(cod_7seg[2]);
-	//send_byte(cod_7seg[3]);
-	//send_byte(cod_7seg[4]);
-	//send_byte(cod_7seg[5]);
-	//send_byte(cod_7seg[6]);
-	//send_byte(cod_7seg[7]);
-	//send_byte(cod_7seg[8]);
-	//send_byte(cod_7seg[9]);
-
-	//GPIO0=0;
-
-	//GPIO1=1;
-	//delay(time);
-	//GPIO1=0;
-
-	//GPIO0=0;
-
-	//GPIO1=1;
-	//delay(time);
-	//GPIO1=0;
-
-	//GPIO0=1;
-
-	//GPIO1=1;
-	//delay(time);
-	//GPIO1=0;
-
-	//GPIO0=1;
-
-	//GPIO1=1;
-	//delay(time);
-	//GPIO1=0;
-
-	//GPIO0=0;
-
-	//GPIO1=1;
-	//delay(time);
-	//GPIO1=0;
-
-	//GPIO0=0;
-
-	//GPIO1=1;
-	//delay(time);
-	//GPIO1=0;
-
-	//GPIO0=1;
-
-	//GPIO1=1;
-	//delay(time);
-	//GPIO1=0;
-
-	//GPIO0=1;
-
-	//GPIO1=1;
-	//delay(time);
-	//GPIO1=0;
-
-	//--
-	//GPIO2=1;
-	//GPIO2=0;
-
-	//GPIO = GPIO | 0b00000010;
 
     	//Loop forever
     	while ( 1 )
     	{
 
-		send_byte(wait() & 0x07);
+		send_byte(cod_7seg[rand_wait() & 0x0F]);
 
     	}
-
 
 }
 
@@ -122,20 +61,42 @@ void send_byte(unsigned int cod) {
 	GP2=0;
 }
 
-unsigned int wait() {
+unsigned int rand_wait() {
 
 	unsigned int rand = 0;
+
 	while(1) {
-		if ( (banderas==0x00) &&  (GP3==1) ) {
-			banderas = 0x01;
-			GP4=GP3;
+
+		rand += 1;
+
+		if ( ((banderas & 0x01) == 0x00) &&  (GP3==1) && (rand <= 99) && (valido(rand)==1) ) {
+			banderas |= 0x01;
+			if ( banderas & 0x02 == 0x02 ) {
+				return 99;
+			}
+			rand = ((rand & 0x01)*1) + ((rand & 0x01)*2) + ((rand & 0x01)*4) + ((rand & 0x01)*8);
 			return rand;
-		} else if ( (banderas==0x01) &&  (GP3==0) ) {
-			banderas = 0x00;
-			GP4=GP3;
+		} else if ( ((banderas & 0x01)==0x01) &&  (GP3==0) ) {
+			banderas &= 0xFE;
 		}
-		rand+=1;
 		
 	}
 
 }
+ 
+unsigned int valido(unsigned int valor) {
+	for (unsigned int c = 0; c < 8; c++) {
+		if ( ((historial[c] & 0xF0) == 0x00) ) {
+			historial[c] |= valor<<4;
+			return 1;
+		} else if ( ((historial[c] & 0x0F) == 0x00) ) {
+			historial[c] |= valor;
+			return 1;
+		} else if ( ((historial[c] & 0xF0) == valor<<4) || ((historial[c] & 0x0F) == valor) ) {
+			return 0;
+		}
+	}
+	banderas |= 0x02;
+	return 1;
+}
+
