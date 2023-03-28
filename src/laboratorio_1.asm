@@ -15,7 +15,6 @@
 ;--------------------------------------------------------
 ; external declarations
 ;--------------------------------------------------------
-	extern	__mulint
 	extern	_ANSEL
 	extern	_TRISIO
 	extern	_ADCON0
@@ -29,6 +28,9 @@
 	global	_main
 	global	_historial
 	global	_banderas
+	global	_blink
+	global	_count_2
+	global	_count_1
 	global	_send_byte
 	global	_rand_wait
 	global	_valido
@@ -78,24 +80,21 @@ STK00	res 1
 ; compiler-defined variables
 ;--------------------------------------------------------
 UDL_laboratorio_1_0	udata
-r0x1044	res	1
-r0x1043	res	1
-r0x1045	res	1
-r0x1046	res	1
-r0x103F	res	1
 r0x103E	res	1
+r0x103D	res	1
+r0x103F	res	1
 r0x1040	res	1
-r0x1041	res	1
-r0x1042	res	1
+r0x1039	res	1
+r0x1038	res	1
+r0x103A	res	1
+r0x103B	res	1
+r0x103C	res	1
+r0x1032	res	1
+r0x1033	res	1
+r0x1034	res	1
+r0x1035	res	1
 r0x1036	res	1
 r0x1037	res	1
-r0x1038	res	1
-r0x1039	res	1
-r0x103B	res	1
-r0x103A	res	1
-r0x103C	res	1
-r0x1027	res	1
-r0x1026	res	1
 r0x1029	res	1
 r0x1028	res	1
 r0x102A	res	1
@@ -106,30 +105,48 @@ r0x102E	res	1
 r0x102F	res	1
 r0x1030	res	1
 r0x1031	res	1
-r0x1032	res	1
-r0x1033	res	1
-r0x1034	res	1
-r0x1035	res	1
-_main_cod_7seg_65537_5	res	20
 ;--------------------------------------------------------
 ; initialized data
 ;--------------------------------------------------------
 
 IDD_laboratorio_1_0	idata
-_banderas
+_count_1
 	db	0x00, 0x00	; 0
 
 
 IDD_laboratorio_1_1	idata
+_count_2
+	db	0x00, 0x00	; 0
+
+
+IDD_laboratorio_1_2	idata
+_blink
+	db	0x00, 0x00	; 0
+
+
+IDD_laboratorio_1_3	idata
+_banderas
+	db	0x00, 0x00	; 0
+
+
+IDD_laboratorio_1_4	idata
 _historial
-	db	0x00, 0x00	; 0
-	db	0x00, 0x00	; 0
-	db	0x00, 0x00	; 0
-	db	0x00, 0x00	; 0
-	db	0x00, 0x00	; 0
-	db	0x00, 0x00	; 0
-	db	0x00, 0x00	; 0
-	db	0x00, 0x00	; 0
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
+	db	0xff, 0x00	; 255
 
 ;--------------------------------------------------------
 ; initialized absolute data
@@ -155,317 +172,583 @@ code_laboratorio_1	code
 ;has an exit
 ;functions called:
 ;   _rand_wait
-;   __mulint
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
 ;   _send_byte
 ;   _rand_wait
-;   __mulint
 ;   _send_byte
-;7 compiler assigned registers:
-;   r0x1043
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;   _send_byte
+;5 compiler assigned registers:
+;   r0x103D
 ;   STK00
-;   r0x1044
-;   STK02
-;   STK01
-;   r0x1045
-;   r0x1046
+;   r0x103E
+;   r0x103F
+;   r0x1040
 ;; Starting pCode block
 S_laboratorio_1__main	code
 _main:
 ; 2 exit points
-;	.line	15; "laboratorio_1.c"	TRISIO = 0b00101000; //P0,1,2,4 como salidas, P3,5 como entrada
-	MOVLW	0x28
+;	.line	26; "laboratorio_1.c"	TRISIO = 0b00001000; //P0,1,2,3,4 como salidas, P5 como entrada
+	MOVLW	0x08
 	BANKSEL	_TRISIO
 	MOVWF	_TRISIO
-;	.line	16; "laboratorio_1.c"	GPIO = 0b00000000; //Pines empiezan en bajo
+;	.line	27; "laboratorio_1.c"	GPIO = 0b00000000; //Pines empiezan en bajo
 	BANKSEL	_GPIO
 	CLRF	_GPIO
-;	.line	18; "laboratorio_1.c"	ADCON0=0x00;                // Internal ADC OFF
+;	.line	29; "laboratorio_1.c"	ADCON0=0x00;                // Internal ADC OFF
 	CLRF	_ADCON0
-;	.line	19; "laboratorio_1.c"	ANSEL=0x00;
+;	.line	30; "laboratorio_1.c"	ANSEL=0x00;
 	BANKSEL	_ANSEL
 	CLRF	_ANSEL
-;	.line	20; "laboratorio_1.c"	CMCON0 = 0x07;
+;	.line	31; "laboratorio_1.c"	CMCON0 = 0x07;
 	MOVLW	0x07
 	BANKSEL	_CMCON0
 	MOVWF	_CMCON0
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
-;	.line	22; "laboratorio_1.c"	unsigned int cod_7seg[10]={0b11111100,\	//0
-	MOVLW	0xfc
-	BANKSEL	_main_cod_7seg_65537_5
-	MOVWF	(_main_cod_7seg_65537_5 + 0)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
-	CLRF	(_main_cod_7seg_65537_5 + 1)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
-	MOVLW	0x60
-	MOVWF	(_main_cod_7seg_65537_5 + 2)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
-	CLRF	(_main_cod_7seg_65537_5 + 3)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
-	MOVLW	0xda
-	MOVWF	(_main_cod_7seg_65537_5 + 4)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
-	CLRF	(_main_cod_7seg_65537_5 + 5)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
-	MOVLW	0xf2
-	MOVWF	(_main_cod_7seg_65537_5 + 6)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
-	CLRF	(_main_cod_7seg_65537_5 + 7)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
-	MOVLW	0x66
-	MOVWF	(_main_cod_7seg_65537_5 + 8)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
-	CLRF	(_main_cod_7seg_65537_5 + 9)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
-	MOVLW	0xb6
-	MOVWF	(_main_cod_7seg_65537_5 + 10)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
-	CLRF	(_main_cod_7seg_65537_5 + 11)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
-	MOVLW	0xbe
-	MOVWF	(_main_cod_7seg_65537_5 + 12)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
-	CLRF	(_main_cod_7seg_65537_5 + 13)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
-	MOVLW	0xe0
-	MOVWF	(_main_cod_7seg_65537_5 + 14)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
-	CLRF	(_main_cod_7seg_65537_5 + 15)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
-	MOVLW	0xfe
-	MOVWF	(_main_cod_7seg_65537_5 + 16)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
-	CLRF	(_main_cod_7seg_65537_5 + 17)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
-	MOVLW	0xe6
-	MOVWF	(_main_cod_7seg_65537_5 + 18)
-;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
-	CLRF	(_main_cod_7seg_65537_5 + 19)
-_00106_DS_:
-;	.line	37; "laboratorio_1.c"	send_byte(cod_7seg[rand_wait() & 0x0F]);
+_00166_DS_:
+;	.line	52; "laboratorio_1.c"	tx = rand_wait();
 	PAGESEL	_rand_wait
 	CALL	_rand_wait
 	PAGESEL	$
-	BANKSEL	r0x1043
-	MOVWF	r0x1043
+	BANKSEL	r0x103D
+	MOVWF	r0x103D
 	MOVF	STK00,W
-	MOVWF	r0x1044
+	MOVWF	r0x103E
+;	.line	53; "laboratorio_1.c"	GP4=0;
+	BANKSEL	_GPIObits
+	BCF	_GPIObits,4
+;	.line	54; "laboratorio_1.c"	if ((tx & 0x0F) == 0x00) {
 	MOVLW	0x0f
-	ANDWF	r0x1044,F
-	CLRF	r0x1043
-	MOVF	r0x1044,W
-	MOVWF	STK02
-	MOVLW	0x00
-	MOVWF	STK01
-	MOVLW	0x02
+	BANKSEL	r0x103E
+	ANDWF	r0x103E,W
+	MOVWF	r0x103F
+	CLRF	r0x1040
+	MOVF	r0x103F,W
+	BTFSS	STATUS,2
+	GOTO	_00132_DS_
+;	.line	55; "laboratorio_1.c"	send_byte(0b11111100);
+	MOVLW	0xfc
 	MOVWF	STK00
 	MOVLW	0x00
-	PAGESEL	__mulint
-	CALL	__mulint
-	PAGESEL	$
-	BANKSEL	r0x1043
-	MOVWF	r0x1043
-	MOVF	STK00,W
-	MOVWF	r0x1044
-	ADDLW	(_main_cod_7seg_65537_5 + 0)
-	MOVWF	r0x1044
-	MOVF	r0x1043,W
-	BTFSC	STATUS,0
-	INCFSZ	r0x1043,W
-	ADDLW	high (_main_cod_7seg_65537_5 + 0)
-	MOVWF	r0x1043
-	MOVF	r0x1044,W
-	BANKSEL	FSR
-	MOVWF	FSR
-	BCF	STATUS,7
-	BANKSEL	r0x1043
-	BTFSC	r0x1043,0
-	BSF	STATUS,7
-	BANKSEL	INDF
-	MOVF	INDF,W
-	BANKSEL	r0x1045
-	MOVWF	r0x1045
-	BANKSEL	FSR
-	INCF	FSR,F
-	MOVF	INDF,W
-	BANKSEL	r0x1046
-	MOVWF	r0x1046
-	MOVF	r0x1045,W
-	MOVWF	STK00
-	MOVF	r0x1046,W
 	PAGESEL	_send_byte
 	CALL	_send_byte
 	PAGESEL	$
-;	.line	38; "laboratorio_1.c"	GP1=1;
+	GOTO	_00133_DS_
+_00132_DS_:
+;	.line	56; "laboratorio_1.c"	} else if ((tx & 0x0F) == 0x01) {
+	BANKSEL	r0x103F
+	MOVF	r0x103F,W
+	XORLW	0x01
+	BTFSS	STATUS,2
+	GOTO	_00129_DS_
+	MOVF	r0x1040,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00129_DS_
+;	.line	57; "laboratorio_1.c"	send_byte(0b01100000);
+	MOVLW	0x60
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00133_DS_
+_00129_DS_:
+;	.line	58; "laboratorio_1.c"	} else if ((tx & 0x0F) == 0x02) {
+	BANKSEL	r0x103F
+	MOVF	r0x103F,W
+	XORLW	0x02
+	BTFSS	STATUS,2
+	GOTO	_00126_DS_
+	MOVF	r0x1040,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00126_DS_
+;	.line	59; "laboratorio_1.c"	send_byte(0b11011010);
+	MOVLW	0xda
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00133_DS_
+_00126_DS_:
+;	.line	60; "laboratorio_1.c"	} else if ((tx & 0x0F) == 0x03) {
+	BANKSEL	r0x103F
+	MOVF	r0x103F,W
+	XORLW	0x03
+	BTFSS	STATUS,2
+	GOTO	_00123_DS_
+	MOVF	r0x1040,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00123_DS_
+;	.line	61; "laboratorio_1.c"	send_byte(0b11110010);
+	MOVLW	0xf2
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00133_DS_
+_00123_DS_:
+;	.line	62; "laboratorio_1.c"	} else if ((tx & 0x0F) == 0x04) {
+	BANKSEL	r0x103F
+	MOVF	r0x103F,W
+	XORLW	0x04
+	BTFSS	STATUS,2
+	GOTO	_00120_DS_
+	MOVF	r0x1040,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00120_DS_
+;	.line	63; "laboratorio_1.c"	send_byte(0b01100110);
+	MOVLW	0x66
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00133_DS_
+_00120_DS_:
+;	.line	64; "laboratorio_1.c"	} else if ((tx & 0x0F) == 0x05) {
+	BANKSEL	r0x103F
+	MOVF	r0x103F,W
+	XORLW	0x05
+	BTFSS	STATUS,2
+	GOTO	_00117_DS_
+	MOVF	r0x1040,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00117_DS_
+;	.line	65; "laboratorio_1.c"	send_byte(0b10110110);
+	MOVLW	0xb6
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00133_DS_
+_00117_DS_:
+;	.line	66; "laboratorio_1.c"	} else if ((tx & 0x0F) == 0x06) {
+	BANKSEL	r0x103F
+	MOVF	r0x103F,W
+	XORLW	0x06
+	BTFSS	STATUS,2
+	GOTO	_00114_DS_
+	MOVF	r0x1040,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00114_DS_
+;	.line	67; "laboratorio_1.c"	send_byte(0b10111110);
+	MOVLW	0xbe
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00133_DS_
+_00114_DS_:
+;	.line	68; "laboratorio_1.c"	} else if ((tx & 0x0F) == 0x07) {
+	BANKSEL	r0x103F
+	MOVF	r0x103F,W
+	XORLW	0x07
+	BTFSS	STATUS,2
+	GOTO	_00111_DS_
+	MOVF	r0x1040,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00111_DS_
+;	.line	69; "laboratorio_1.c"	send_byte(0b11100000);
+	MOVLW	0xe0
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00133_DS_
+_00111_DS_:
+;	.line	70; "laboratorio_1.c"	} else if ((tx & 0x0F) == 0x08) {
+	BANKSEL	r0x103F
+	MOVF	r0x103F,W
+	XORLW	0x08
+	BTFSS	STATUS,2
+	GOTO	_00108_DS_
+	MOVF	r0x1040,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00108_DS_
+;	.line	71; "laboratorio_1.c"	send_byte(0b11111110);
+	MOVLW	0xfe
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00133_DS_
+_00108_DS_:
+;	.line	72; "laboratorio_1.c"	} else if ((tx & 0x0F) == 0x09) {
+	BANKSEL	r0x103F
+	MOVF	r0x103F,W
+	XORLW	0x09
+	BTFSS	STATUS,2
+	GOTO	_00133_DS_
+	MOVF	r0x1040,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00133_DS_
+;	.line	73; "laboratorio_1.c"	send_byte(0b11100110);
+	MOVLW	0xe6
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+_00133_DS_:
+;	.line	76; "laboratorio_1.c"	GP4=1;
 	BANKSEL	_GPIObits
-	BSF	_GPIObits,1
-;	.line	39; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	40; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	41; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	42; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	43; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	44; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	45; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	46; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	47; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	48; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	49; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	50; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	51; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	52; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	53; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	54; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	55; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	56; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	57; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	58; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	59; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	60; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	61; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	62; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	63; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	64; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	65; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	66; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	67; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	68; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	69; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	70; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	71; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	72; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	73; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	74; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	75; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	76; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	77; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	78; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	79; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	80; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	81; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	82; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	83; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	84; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	85; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	86; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	87; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	88; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	89; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	90; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	91; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	92; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	93; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	94; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	95; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	96; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	97; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	98; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	99; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	100; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	101; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	102; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	103; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	104; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	105; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	106; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	107; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	108; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	109; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	110; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	111; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	112; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	113; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	114; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	115; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	116; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	117; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	118; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	119; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-;	.line	120; "laboratorio_1.c"	GP1=1;
-	BSF	_GPIObits,1
-;	.line	121; "laboratorio_1.c"	GP1=0;
-	BCF	_GPIObits,1
-	GOTO	_00106_DS_
-;	.line	125; "laboratorio_1.c"	}
+	BSF	_GPIObits,4
+;	.line	77; "laboratorio_1.c"	if ((tx & 0xF0) == 0x00) {
+	MOVLW	0xf0
+	BANKSEL	r0x103E
+	ANDWF	r0x103E,F
+	CLRF	r0x103D
+	MOVF	r0x103E,W
+	BTFSS	STATUS,2
+	GOTO	_00161_DS_
+;	.line	78; "laboratorio_1.c"	send_byte(0b11111100);
+	MOVLW	0xfc
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00162_DS_
+_00161_DS_:
+;	.line	79; "laboratorio_1.c"	} else if ((tx & 0xF0) == 0x10) {
+	BANKSEL	r0x103E
+	MOVF	r0x103E,W
+	XORLW	0x10
+	BTFSS	STATUS,2
+	GOTO	_00158_DS_
+	MOVF	r0x103D,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00158_DS_
+;	.line	80; "laboratorio_1.c"	send_byte(0b01100000);
+	MOVLW	0x60
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00162_DS_
+_00158_DS_:
+;	.line	81; "laboratorio_1.c"	} else if ((tx & 0xF0) == 0x20) {
+	BANKSEL	r0x103E
+	MOVF	r0x103E,W
+	XORLW	0x20
+	BTFSS	STATUS,2
+	GOTO	_00155_DS_
+	MOVF	r0x103D,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00155_DS_
+;	.line	82; "laboratorio_1.c"	send_byte(0b11011010);
+	MOVLW	0xda
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00162_DS_
+_00155_DS_:
+;	.line	83; "laboratorio_1.c"	} else if ((tx & 0xF0) == 0x30) {
+	BANKSEL	r0x103E
+	MOVF	r0x103E,W
+	XORLW	0x30
+	BTFSS	STATUS,2
+	GOTO	_00152_DS_
+	MOVF	r0x103D,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00152_DS_
+;	.line	84; "laboratorio_1.c"	send_byte(0b11110010);
+	MOVLW	0xf2
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00162_DS_
+_00152_DS_:
+;	.line	85; "laboratorio_1.c"	} else if ((tx & 0xF0) == 0x40) {
+	BANKSEL	r0x103E
+	MOVF	r0x103E,W
+	XORLW	0x40
+	BTFSS	STATUS,2
+	GOTO	_00149_DS_
+	MOVF	r0x103D,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00149_DS_
+;	.line	86; "laboratorio_1.c"	send_byte(0b01100110);
+	MOVLW	0x66
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00162_DS_
+_00149_DS_:
+;	.line	87; "laboratorio_1.c"	} else if ((tx & 0xF0) == 0x50) {
+	BANKSEL	r0x103E
+	MOVF	r0x103E,W
+	XORLW	0x50
+	BTFSS	STATUS,2
+	GOTO	_00146_DS_
+	MOVF	r0x103D,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00146_DS_
+;	.line	88; "laboratorio_1.c"	send_byte(0b10110110);
+	MOVLW	0xb6
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00162_DS_
+_00146_DS_:
+;	.line	89; "laboratorio_1.c"	} else if ((tx & 0xF0) == 0x60) {
+	BANKSEL	r0x103E
+	MOVF	r0x103E,W
+	XORLW	0x60
+	BTFSS	STATUS,2
+	GOTO	_00143_DS_
+	MOVF	r0x103D,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00143_DS_
+;	.line	90; "laboratorio_1.c"	send_byte(0b10111110);
+	MOVLW	0xbe
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00162_DS_
+_00143_DS_:
+;	.line	91; "laboratorio_1.c"	} else if ((tx & 0xF0) == 0x70) {
+	BANKSEL	r0x103E
+	MOVF	r0x103E,W
+	XORLW	0x70
+	BTFSS	STATUS,2
+	GOTO	_00140_DS_
+	MOVF	r0x103D,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00140_DS_
+;	.line	92; "laboratorio_1.c"	send_byte(0b11100000);
+	MOVLW	0xe0
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00162_DS_
+_00140_DS_:
+;	.line	93; "laboratorio_1.c"	} else if ((tx & 0xF0) == 0x80) {
+	BANKSEL	r0x103E
+	MOVF	r0x103E,W
+	XORLW	0x80
+	BTFSS	STATUS,2
+	GOTO	_00137_DS_
+	MOVF	r0x103D,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00137_DS_
+;	.line	94; "laboratorio_1.c"	send_byte(0b11111110);
+	MOVLW	0xfe
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+	GOTO	_00162_DS_
+_00137_DS_:
+;	.line	95; "laboratorio_1.c"	} else if ((tx & 0xF0) == 0x90) {
+	BANKSEL	r0x103E
+	MOVF	r0x103E,W
+	XORLW	0x90
+	BTFSS	STATUS,2
+	GOTO	_00162_DS_
+	MOVF	r0x103D,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00162_DS_
+;	.line	96; "laboratorio_1.c"	send_byte(0b11100110);
+	MOVLW	0xe6
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_send_byte
+	CALL	_send_byte
+	PAGESEL	$
+_00162_DS_:
+;	.line	99; "laboratorio_1.c"	if ( (banderas & 0x02) == 0x02 ) {
+	MOVLW	0x02
+	BANKSEL	_banderas
+	ANDWF	_banderas,W
+	BANKSEL	r0x103E
+	MOVWF	r0x103E
+	CLRF	r0x103D
+	MOVF	r0x103E,W
+	XORLW	0x02
+	BTFSS	STATUS,2
+	GOTO	_00166_DS_
+	MOVF	r0x103D,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00166_DS_
+;	.line	100; "laboratorio_1.c"	banderas &= 0x11111101;
+	MOVLW	0x01
+	BANKSEL	_banderas
+	ANDWF	_banderas,F
+	MOVLW	0x11
+	ANDWF	(_banderas + 1),F
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	101; "laboratorio_1.c"	historial[0] = 0xFF;
+	MOVLW	0xff
+	BANKSEL	_historial
+	MOVWF	(_historial + 0)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 1)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	102; "laboratorio_1.c"	historial[1] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 2)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 3)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	103; "laboratorio_1.c"	historial[2] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 4)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 5)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	104; "laboratorio_1.c"	historial[3] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 6)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 7)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	105; "laboratorio_1.c"	historial[4] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 8)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 9)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	106; "laboratorio_1.c"	historial[5] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 10)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 11)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	107; "laboratorio_1.c"	historial[6] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 12)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 13)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	108; "laboratorio_1.c"	historial[7] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 14)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 15)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	109; "laboratorio_1.c"	historial[8] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 16)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 17)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	110; "laboratorio_1.c"	historial[9] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 18)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 19)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	111; "laboratorio_1.c"	historial[10] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 20)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 21)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	112; "laboratorio_1.c"	historial[11] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 22)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 23)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	113; "laboratorio_1.c"	historial[12] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 24)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 25)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	114; "laboratorio_1.c"	historial[13] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 26)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 27)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	115; "laboratorio_1.c"	historial[14] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 28)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 29)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=1, offset=0, AOP_TYPE(res)=8
+;	.line	116; "laboratorio_1.c"	historial[14] = 0xFF;
+	MOVLW	0xff
+	MOVWF	(_historial + 28)
+;;/home/sdcc-builder/build/sdcc-build/orig/sdcc/src/pic14/gen.c:6828: size=0, offset=1, AOP_TYPE(res)=8
+	CLRF	(_historial + 29)
+	GOTO	_00166_DS_
+;	.line	122; "laboratorio_1.c"	}
 	RETURN	
 ; exit point of _main
 
@@ -473,11 +756,9 @@ _00106_DS_:
 ;  pBlock Stats: dbName = C
 ;***
 ;has an exit
-;17 compiler assigned registers:
-;   r0x1026
-;   STK00
-;   r0x1027
+;11 compiler assigned registers:
 ;   r0x1028
+;   STK00
 ;   r0x1029
 ;   r0x102A
 ;   r0x102B
@@ -487,46 +768,34 @@ _00106_DS_:
 ;   r0x102F
 ;   r0x1030
 ;   r0x1031
-;   r0x1032
-;   r0x1033
-;   r0x1034
-;   r0x1035
 ;; Starting pCode block
 S_laboratorio_1__valido	code
 _valido:
 ; 2 exit points
-;	.line	166; "laboratorio_1.c"	unsigned int valido(unsigned int valor) {
-	BANKSEL	r0x1026
-	MOVWF	r0x1026
-	MOVF	STK00,W
-	MOVWF	r0x1027
-;	.line	167; "laboratorio_1.c"	for (unsigned int c = 0; c < 8; c++) {
-	SWAPF	r0x1026,W
-	ANDLW	0xf0
+;	.line	181; "laboratorio_1.c"	unsigned int valido(unsigned int valor) {
+	BANKSEL	r0x1028
 	MOVWF	r0x1028
-	SWAPF	r0x1027,W
+	MOVF	STK00,W
 	MOVWF	r0x1029
-	ANDLW	0x0f
-	IORWF	r0x1028,F
-	XORWF	r0x1029,F
+;	.line	182; "laboratorio_1.c"	for (unsigned int c = 0; c < 16; c++) {
 	CLRF	r0x102A
 	CLRF	r0x102B
 	CLRF	r0x102C
 	CLRF	r0x102D
-;;unsigned compare: left < lit(0x8=8), size=2
-_00197_DS_:
+;;unsigned compare: left < lit(0x10=16), size=2
+_00279_DS_:
 	MOVLW	0x00
 	BANKSEL	r0x102B
 	SUBWF	r0x102B,W
 	BTFSS	STATUS,2
-	GOTO	_00221_DS_
-	MOVLW	0x08
+	GOTO	_00299_DS_
+	MOVLW	0x10
 	SUBWF	r0x102A,W
-_00221_DS_:
+_00299_DS_:
 	BTFSC	STATUS,0
-	GOTO	_00195_DS_
-;;genSkipc:3307: created from rifx:0x7ffde90cf3e0
-;	.line	168; "laboratorio_1.c"	if ( ((historial[c] & 0xF0) == 0x00) ) {
+	GOTO	_00277_DS_
+;;genSkipc:3307: created from rifx:0x7ffff174bc40
+;	.line	183; "laboratorio_1.c"	if ( (historial[c] == 0xFF) ) {
 	BANKSEL	r0x102C
 	MOVF	r0x102C,W
 	ADDLW	(_historial + 0)
@@ -553,104 +822,53 @@ _00221_DS_:
 	MOVF	INDF,W
 	BANKSEL	r0x1031
 	MOVWF	r0x1031
-	MOVLW	0xf0
-	ANDWF	r0x1030,W
-	MOVWF	r0x1032
-	CLRF	r0x1033
-	MOVF	r0x1032,W
-	BTFSS	STATUS,2
-	GOTO	_00193_DS_
-;	.line	169; "laboratorio_1.c"	historial[c] |= valor<<4;
-	MOVF	r0x1029,W
-	IORWF	r0x1030,W
-	MOVWF	r0x1034
-	MOVF	r0x1028,W
-	IORWF	r0x1031,W
-	MOVWF	r0x1035
-	MOVF	r0x102E,W
-	BANKSEL	FSR
-	MOVWF	FSR
-	BCF	STATUS,7
-	BANKSEL	r0x102F
-	BTFSC	r0x102F,0
-	BSF	STATUS,7
-	MOVF	r0x1034,W
-	BANKSEL	INDF
-	MOVWF	INDF
-	INCF	FSR,F
-	BANKSEL	r0x1035
-	MOVF	r0x1035,W
-	BANKSEL	INDF
-	MOVWF	INDF
-;	.line	170; "laboratorio_1.c"	return 1;
-	MOVLW	0x01
-	MOVWF	STK00
-	MOVLW	0x00
-	GOTO	_00199_DS_
-_00193_DS_:
-;	.line	171; "laboratorio_1.c"	} else if ( ((historial[c] & 0x0F) == 0x00) ) {
-	MOVLW	0x0f
-	BANKSEL	r0x1030
-	ANDWF	r0x1030,W
-	MOVWF	r0x1034
-	CLRF	r0x1035
-	MOVF	r0x1034,W
-	BTFSS	STATUS,2
-	GOTO	_00190_DS_
-;	.line	172; "laboratorio_1.c"	historial[c] |= valor;
-	MOVF	r0x1027,W
-	IORWF	r0x1030,F
-	MOVF	r0x1026,W
-	IORWF	r0x1031,F
-	MOVF	r0x102E,W
-	BANKSEL	FSR
-	MOVWF	FSR
-	BCF	STATUS,7
-	BANKSEL	r0x102F
-	BTFSC	r0x102F,0
-	BSF	STATUS,7
 	MOVF	r0x1030,W
+	XORLW	0xff
+	BTFSS	STATUS,2
+	GOTO	_00275_DS_
+	MOVF	r0x1031,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00275_DS_
+;	.line	184; "laboratorio_1.c"	historial[c] = valor;
+	MOVF	r0x102E,W
+	BANKSEL	FSR
+	MOVWF	FSR
+	BCF	STATUS,7
+	BANKSEL	r0x102F
+	BTFSC	r0x102F,0
+	BSF	STATUS,7
+	MOVF	r0x1029,W
 	BANKSEL	INDF
 	MOVWF	INDF
 	INCF	FSR,F
-	BANKSEL	r0x1031
-	MOVF	r0x1031,W
+	BANKSEL	r0x1028
+	MOVF	r0x1028,W
 	BANKSEL	INDF
 	MOVWF	INDF
-;	.line	173; "laboratorio_1.c"	return 1;
+;	.line	185; "laboratorio_1.c"	return 1;
 	MOVLW	0x01
 	MOVWF	STK00
 	MOVLW	0x00
-	GOTO	_00199_DS_
-_00190_DS_:
-;	.line	174; "laboratorio_1.c"	} else if ( ((historial[c] & 0xF0) == valor<<4) || ((historial[c] & 0x0F) == valor) ) {
+	GOTO	_00281_DS_
+_00275_DS_:
+;	.line	186; "laboratorio_1.c"	} else if ( historial[c] == valor ) {
 	BANKSEL	r0x1029
 	MOVF	r0x1029,W
-	XORWF	r0x1032,W
+	XORWF	r0x1030,W
 	BTFSS	STATUS,2
-	GOTO	_00222_DS_
+	GOTO	_00280_DS_
 	MOVF	r0x1028,W
-	XORWF	r0x1033,W
-	BTFSC	STATUS,2
-	GOTO	_00186_DS_
-_00222_DS_:
-	BANKSEL	r0x1027
-	MOVF	r0x1027,W
-	XORWF	r0x1034,W
+	XORWF	r0x1031,W
 	BTFSS	STATUS,2
-	GOTO	_00194_DS_
-	MOVF	r0x1026,W
-	XORWF	r0x1035,W
-	BTFSS	STATUS,2
-	GOTO	_00194_DS_
-_00186_DS_:
-;	.line	175; "laboratorio_1.c"	return 0;
+	GOTO	_00280_DS_
+;	.line	187; "laboratorio_1.c"	return 0;
 	MOVLW	0x00
 	MOVWF	STK00
 	MOVLW	0x00
-	GOTO	_00199_DS_
-_00194_DS_:
-;	.line	167; "laboratorio_1.c"	for (unsigned int c = 0; c < 8; c++) {
+	GOTO	_00281_DS_
+_00280_DS_:
+;	.line	182; "laboratorio_1.c"	for (unsigned int c = 0; c < 16; c++) {
 	MOVLW	0x02
 	BANKSEL	r0x102C
 	ADDWF	r0x102C,F
@@ -659,17 +877,17 @@ _00194_DS_:
 	INCF	r0x102A,F
 	BTFSC	STATUS,2
 	INCF	r0x102B,F
-	GOTO	_00197_DS_
-_00195_DS_:
-;	.line	178; "laboratorio_1.c"	banderas |= 0x02;
+	GOTO	_00279_DS_
+_00277_DS_:
+;	.line	190; "laboratorio_1.c"	banderas |= 0x02;
 	BANKSEL	_banderas
 	BSF	_banderas,1
-;	.line	179; "laboratorio_1.c"	return 1;
+;	.line	191; "laboratorio_1.c"	return 1;
 	MOVLW	0x01
 	MOVWF	STK00
 	MOVLW	0x00
-_00199_DS_:
-;	.line	180; "laboratorio_1.c"	}
+_00281_DS_:
+;	.line	192; "laboratorio_1.c"	}
 	RETURN	
 ; exit point of _valido
 
@@ -679,193 +897,260 @@ _00199_DS_:
 ;has an exit
 ;functions called:
 ;   _valido
-;   __mulint
-;   __mulint
-;   __mulint
 ;   _valido
-;   __mulint
-;   __mulint
-;   __mulint
-;11 compiler assigned registers:
+;7 compiler assigned registers:
+;   r0x1032
+;   r0x1033
+;   r0x1034
+;   r0x1035
 ;   r0x1036
 ;   r0x1037
-;   r0x1038
 ;   STK00
-;   r0x1039
-;   STK02
-;   STK01
-;   r0x103A
-;   r0x103B
-;   r0x103C
-;   r0x103D
 ;; Starting pCode block
 S_laboratorio_1__rand_wait	code
 _rand_wait:
 ; 2 exit points
-;	.line	147; "laboratorio_1.c"	while(1) {
-	BANKSEL	r0x1036
-	CLRF	r0x1036
-	CLRF	r0x1037
-_00143_DS_:
-;	.line	149; "laboratorio_1.c"	rand += 1;
-	BANKSEL	r0x1036
-	INCF	r0x1036,F
-	BTFSC	STATUS,2
-	INCF	r0x1037,F
-;	.line	151; "laboratorio_1.c"	if ( ((banderas & 0x01) == 0x00) &&  (GP3==1) && (rand <= 99) && (valido(rand)==1) ) {
-	BANKSEL	_banderas
-	BTFSC	_banderas,0
-	GOTO	_00137_DS_
-	BANKSEL	r0x1038
-	CLRF	r0x1038
-	BANKSEL	_GPIObits
-	BTFSS	_GPIObits,3
-	GOTO	_00001_DS_
-	BANKSEL	r0x1038
-	INCF	r0x1038,F
-_00001_DS_:
-	BANKSEL	r0x1038
-	MOVF	r0x1038,W
-	XORLW	0x01
+;	.line	139; "laboratorio_1.c"	unsigned int rand = 0x00;
+	BANKSEL	r0x1032
+	CLRF	r0x1032
+	CLRF	r0x1033
+_00214_DS_:
+;	.line	143; "laboratorio_1.c"	if ( (rand & 0x0F) < 0x09) {
+	MOVLW	0x0f
+	BANKSEL	r0x1032
+	ANDWF	r0x1032,W
+	MOVWF	r0x1034
+	CLRF	r0x1035
+;;unsigned compare: left < lit(0x9=9), size=2
+	MOVLW	0x00
+	SUBWF	r0x1035,W
 	BTFSS	STATUS,2
-	GOTO	_00137_DS_
-;;swapping arguments (AOP_TYPEs 1/2)
-;;unsigned compare: left >= lit(0x64=100), size=2
+	GOTO	_00266_DS_
+	MOVLW	0x09
+	SUBWF	r0x1034,W
+_00266_DS_:
+	BTFSC	STATUS,0
+	GOTO	_00195_DS_
+;;genSkipc:3307: created from rifx:0x7ffff174bc40
+;	.line	144; "laboratorio_1.c"	rand+=0x01;
+	BANKSEL	r0x1032
+	INCF	r0x1032,F
+	BTFSC	STATUS,2
+	INCF	r0x1033,F
+	GOTO	_00196_DS_
+_00195_DS_:
+;	.line	145; "laboratorio_1.c"	} else if ((rand & 0xF0)>>4 < 9) {
+	MOVLW	0xf0
+	BANKSEL	r0x1032
+	ANDWF	r0x1032,W
+	MOVWF	r0x1034
+	CLRF	r0x1035
+	SWAPF	r0x1034,W
+	ANDLW	0x0f
+	MOVWF	r0x1036
+	SWAPF	r0x1035,W
+	MOVWF	r0x1037
+	ANDLW	0xf0
+	IORWF	r0x1036,F
+	XORWF	r0x1037,F
+;;unsigned compare: left < lit(0x9=9), size=2
 	MOVLW	0x00
 	SUBWF	r0x1037,W
 	BTFSS	STATUS,2
-	GOTO	_00181_DS_
-	MOVLW	0x64
+	GOTO	_00267_DS_
+	MOVLW	0x09
 	SUBWF	r0x1036,W
-_00181_DS_:
+_00267_DS_:
 	BTFSC	STATUS,0
-	GOTO	_00137_DS_
-;;genSkipc:3307: created from rifx:0x7ffde90cf3e0
-	BANKSEL	r0x1036
-	MOVF	r0x1036,W
+	GOTO	_00192_DS_
+;;genSkipc:3307: created from rifx:0x7ffff174bc40
+;	.line	146; "laboratorio_1.c"	rand = (rand+0x10) & 0xF0;
+	MOVLW	0x10
+	BANKSEL	r0x1032
+	ADDWF	r0x1032,W
+	MOVWF	r0x1034
+	CLRF	r0x1035
+	RLF	r0x1035,F
+	MOVF	r0x1033,W
+	ADDWF	r0x1035,F
+	MOVLW	0xf0
+	ANDWF	r0x1034,W
+	MOVWF	r0x1032
+	CLRF	r0x1033
+	GOTO	_00196_DS_
+_00192_DS_:
+;	.line	148; "laboratorio_1.c"	rand = 0x00;
+	BANKSEL	r0x1032
+	CLRF	r0x1032
+	CLRF	r0x1033
+_00196_DS_:
+;	.line	151; "laboratorio_1.c"	if ( ((banderas & 0x01) == 0x00) &&  (GP3==1) && (valido(rand)==1) ) {
+	BANKSEL	_banderas
+	BTFSC	_banderas,0
+	GOTO	_00203_DS_
+	BANKSEL	r0x1034
+	CLRF	r0x1034
+	BANKSEL	_GPIObits
+	BTFSS	_GPIObits,3
+	GOTO	_00001_DS_
+	BANKSEL	r0x1034
+	INCF	r0x1034,F
+_00001_DS_:
+	BANKSEL	r0x1034
+	MOVF	r0x1034,W
+	XORLW	0x01
+	BTFSS	STATUS,2
+	GOTO	_00203_DS_
+	MOVF	r0x1032,W
 	MOVWF	STK00
-	MOVF	r0x1037,W
+	MOVF	r0x1033,W
 	PAGESEL	_valido
 	CALL	_valido
 	PAGESEL	$
-	BANKSEL	r0x1039
-	MOVWF	r0x1039
+	BANKSEL	r0x1035
+	MOVWF	r0x1035
 	MOVF	STK00,W
-	MOVWF	r0x1038
+	MOVWF	r0x1034
 	XORLW	0x01
 	BTFSS	STATUS,2
-	GOTO	_00137_DS_
-	MOVF	r0x1039,W
+	GOTO	_00203_DS_
+	MOVF	r0x1035,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00137_DS_
+	GOTO	_00203_DS_
 ;	.line	152; "laboratorio_1.c"	banderas |= 0x01;
 	BANKSEL	_banderas
 	BSF	_banderas,0
-;	.line	153; "laboratorio_1.c"	if ( banderas & 0x02 == 0x02 ) {
-	BTFSS	_banderas,0
-	GOTO	_00132_DS_
-;	.line	154; "laboratorio_1.c"	return 99;
-	MOVLW	0x63
-	MOVWF	STK00
-	MOVLW	0x00
-	GOTO	_00145_DS_
-_00132_DS_:
-;	.line	156; "laboratorio_1.c"	rand = ((rand & 0x01)*1) + ((rand & 0x01)*2) + ((rand & 0x01)*4) + ((rand & 0x01)*8);
-	MOVLW	0x01
-	BANKSEL	r0x1036
-	ANDWF	r0x1036,W
-	MOVWF	r0x1038
-	CLRF	r0x1039
-	MOVF	r0x1038,W
-	MOVWF	STK02
-	MOVLW	0x00
-	MOVWF	STK01
+;	.line	153; "laboratorio_1.c"	if ( (banderas & 0x02) == 0x02 ) {
 	MOVLW	0x02
+	ANDWF	_banderas,W
+	BANKSEL	r0x1034
+	MOVWF	r0x1034
+	CLRF	r0x1035
+	MOVF	r0x1034,W
+	XORLW	0x02
+	BTFSS	STATUS,2
+	GOTO	_00198_DS_
+	MOVF	r0x1035,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00198_DS_
+;	.line	154; "laboratorio_1.c"	GP5=0;
+	BANKSEL	_GPIObits
+	BCF	_GPIObits,5
+;	.line	155; "laboratorio_1.c"	blink=1;
+	MOVLW	0x01
+	BANKSEL	_blink
+	MOVWF	_blink
+	CLRF	(_blink + 1)
+;	.line	156; "laboratorio_1.c"	return 0x11;
+	MOVLW	0x11
 	MOVWF	STK00
 	MOVLW	0x00
-	PAGESEL	__mulint
-	CALL	__mulint
-	PAGESEL	$
-	BANKSEL	r0x103A
-	MOVWF	r0x103A
-	MOVF	STK00,W
-	MOVWF	r0x103B
-	ADDWF	r0x1038,W
-	MOVWF	r0x103B
-	MOVF	r0x1039,W
-	BTFSC	STATUS,0
-	INCFSZ	r0x1039,W
-	ADDWF	r0x103A,F
-	MOVF	r0x1038,W
-	MOVWF	STK02
-	MOVF	r0x1039,W
-	MOVWF	STK01
-	MOVLW	0x04
+	GOTO	_00216_DS_
+_00198_DS_:
+;	.line	158; "laboratorio_1.c"	GP5=0;
+	BANKSEL	_GPIObits
+	BCF	_GPIObits,5
+;	.line	159; "laboratorio_1.c"	blink=0;
+	BANKSEL	_blink
+	CLRF	_blink
+	CLRF	(_blink + 1)
+;	.line	160; "laboratorio_1.c"	return rand;
+	BANKSEL	r0x1032
+	MOVF	r0x1032,W
 	MOVWF	STK00
-	MOVLW	0x00
-	PAGESEL	__mulint
-	CALL	__mulint
-	PAGESEL	$
-	BANKSEL	r0x103C
-	MOVWF	r0x103C
-	MOVF	STK00,W
-;;1	MOVWF	r0x103D
-	ADDWF	r0x103B,F
-	MOVF	r0x103C,W
-	BTFSC	STATUS,0
-	INCFSZ	r0x103C,W
-	ADDWF	r0x103A,F
-	MOVF	r0x1038,W
-	MOVWF	STK02
-	MOVF	r0x1039,W
-	MOVWF	STK01
-	MOVLW	0x08
-	MOVWF	STK00
-	MOVLW	0x00
-	PAGESEL	__mulint
-	CALL	__mulint
-	PAGESEL	$
-	BANKSEL	r0x1039
-	MOVWF	r0x1039
-	MOVF	STK00,W
-	MOVWF	r0x1038
-	ADDWF	r0x103B,F
-	MOVF	r0x1039,W
-	BTFSC	STATUS,0
-	INCFSZ	r0x1039,W
-	ADDWF	r0x103A,F
-;	.line	157; "laboratorio_1.c"	return rand;
-	MOVF	r0x103B,W
-	MOVWF	STK00
-	MOVF	r0x103A,W
-	GOTO	_00145_DS_
-_00137_DS_:
-;	.line	158; "laboratorio_1.c"	} else if ( ((banderas & 0x01)==0x01) &&  (GP3==0) ) {
+	MOVF	r0x1033,W
+	GOTO	_00216_DS_
+_00203_DS_:
+;	.line	161; "laboratorio_1.c"	} else if ( ((banderas & 0x01)==0x01) &&  (GP3==0) ) {
 	MOVLW	0x01
 	BANKSEL	_banderas
 	ANDWF	_banderas,W
-	BANKSEL	r0x1038
-	MOVWF	r0x1038
-	CLRF	r0x1039
-	MOVF	r0x1038,W
+	BANKSEL	r0x1034
+	MOVWF	r0x1034
+	CLRF	r0x1035
+	MOVF	r0x1034,W
 	XORLW	0x01
 	BTFSS	STATUS,2
-	GOTO	_00143_DS_
-	MOVF	r0x1039,W
+	GOTO	_00204_DS_
+	MOVF	r0x1035,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00143_DS_
+	GOTO	_00204_DS_
 	BANKSEL	_GPIObits
 	BTFSC	_GPIObits,3
-	GOTO	_00143_DS_
-;	.line	159; "laboratorio_1.c"	banderas &= 0xFE;
+	GOTO	_00204_DS_
+;	.line	162; "laboratorio_1.c"	banderas &= 0b11111110;
 	BANKSEL	_banderas
 	BCF	_banderas,0
 	CLRF	(_banderas + 1)
-	GOTO	_00143_DS_
-_00145_DS_:
-;	.line	164; "laboratorio_1.c"	}
+_00204_DS_:
+;	.line	165; "laboratorio_1.c"	count_1+=1;
+	BANKSEL	_count_1
+	INCF	_count_1,F
+	BTFSC	STATUS,2
+	INCF	(_count_1 + 1),F
+;	.line	166; "laboratorio_1.c"	if (count_1==0) {
+	MOVF	(_count_1 + 1),W
+	IORWF	_count_1,W
+	BTFSS	STATUS,2
+	GOTO	_00208_DS_
+;	.line	167; "laboratorio_1.c"	count_2+=1;
+	BANKSEL	_count_2
+	INCF	_count_2,F
+	BTFSC	STATUS,2
+	INCF	(_count_2 + 1),F
+_00208_DS_:
+;	.line	169; "laboratorio_1.c"	if (count_2 == time) {
+	BANKSEL	_count_2
+	MOVF	_count_2,W
+	XORLW	0x01
+	BTFSS	STATUS,2
+	GOTO	_00214_DS_
+	MOVF	(_count_2 + 1),W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00214_DS_
+;	.line	170; "laboratorio_1.c"	count_2=0;
+	CLRF	_count_2
+	CLRF	(_count_2 + 1)
+;	.line	172; "laboratorio_1.c"	if ( blink == 1 ) {
+	BANKSEL	_blink
+	MOVF	_blink,W
+	XORLW	0x01
+	BTFSS	STATUS,2
+	GOTO	_00214_DS_
+	MOVF	(_blink + 1),W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00214_DS_
+;	.line	173; "laboratorio_1.c"	GP5=~GP5;
+	BANKSEL	r0x1034
+	CLRF	r0x1034
+	BANKSEL	_GPIObits
+	BTFSS	_GPIObits,5
+	GOTO	_00002_DS_
+	BANKSEL	r0x1034
+	INCF	r0x1034,F
+_00002_DS_:
+	BANKSEL	r0x1034
+	COMF	r0x1034,W
+	MOVWF	r0x1034
+	RRF	r0x1034,W
+	BTFSC	STATUS,0
+	GOTO	_00003_DS_
+	BANKSEL	_GPIObits
+	BCF	_GPIObits,5
+_00003_DS_:
+	BTFSS	STATUS,0
+	GOTO	_00004_DS_
+	BANKSEL	_GPIObits
+	BSF	_GPIObits,5
+_00004_DS_:
+	GOTO	_00214_DS_
+_00216_DS_:
+;	.line	179; "laboratorio_1.c"	}
 	RETURN	
 ; exit point of _rand_wait
 
@@ -874,81 +1159,80 @@ _00145_DS_:
 ;***
 ;has an exit
 ;6 compiler assigned registers:
-;   r0x103E
+;   r0x1038
 ;   STK00
-;   r0x103F
-;   r0x1040
-;   r0x1041
-;   r0x1042
+;   r0x1039
+;   r0x103A
+;   r0x103B
+;   r0x103C
 ;; Starting pCode block
 S_laboratorio_1__send_byte	code
 _send_byte:
 ; 2 exit points
-;	.line	128; "laboratorio_1.c"	void send_byte(unsigned int cod) {
-	BANKSEL	r0x103E
-	MOVWF	r0x103E
+;	.line	125; "laboratorio_1.c"	void send_byte(unsigned int cod) {
+	BANKSEL	r0x1038
+	MOVWF	r0x1038
 	MOVF	STK00,W
-	MOVWF	r0x103F
-;	.line	132; "laboratorio_1.c"	for (unsigned int c = 0 ; c < 8 ; c++) {
-	CLRF	r0x1040
-	CLRF	r0x1041
+	MOVWF	r0x1039
+;	.line	127; "laboratorio_1.c"	for (unsigned int c = 0 ; c < 8 ; c++) {
+	CLRF	r0x103A
+	CLRF	r0x103B
 ;;unsigned compare: left < lit(0x8=8), size=2
-_00113_DS_:
+_00173_DS_:
 	MOVLW	0x00
-	BANKSEL	r0x1041
-	SUBWF	r0x1041,W
+	BANKSEL	r0x103B
+	SUBWF	r0x103B,W
 	BTFSS	STATUS,2
-	GOTO	_00126_DS_
+	GOTO	_00186_DS_
 	MOVLW	0x08
-	SUBWF	r0x1040,W
-_00126_DS_:
+	SUBWF	r0x103A,W
+_00186_DS_:
 	BTFSC	STATUS,0
-	GOTO	_00111_DS_
-;;genSkipc:3307: created from rifx:0x7ffde90cf3e0
-;	.line	133; "laboratorio_1.c"	bit = cod & 0x01;
-	BANKSEL	r0x103F
-	MOVF	r0x103F,W
-	MOVWF	r0x1042
-;	.line	134; "laboratorio_1.c"	GP0=bit;
-	RRF	r0x1042,W
+	GOTO	_00171_DS_
+;;genSkipc:3307: created from rifx:0x7ffff174bc40
+;	.line	128; "laboratorio_1.c"	GP0=cod & 0x01;
+	BANKSEL	r0x1039
+	MOVF	r0x1039,W
+	MOVWF	r0x103C
+	RRF	r0x103C,W
 	BTFSC	STATUS,0
-	GOTO	_00002_DS_
+	GOTO	_00005_DS_
 	BANKSEL	_GPIObits
 	BCF	_GPIObits,0
-_00002_DS_:
+_00005_DS_:
 	BTFSS	STATUS,0
-	GOTO	_00003_DS_
+	GOTO	_00006_DS_
 	BANKSEL	_GPIObits
 	BSF	_GPIObits,0
-_00003_DS_:
-;	.line	135; "laboratorio_1.c"	GP1=1;
+_00006_DS_:
+;	.line	129; "laboratorio_1.c"	GP1=1;
 	BANKSEL	_GPIObits
 	BSF	_GPIObits,1
-;	.line	136; "laboratorio_1.c"	GP1=0;
+;	.line	130; "laboratorio_1.c"	GP1=0;
 	BCF	_GPIObits,1
 ;;shiftRight_Left2ResultLit:5474: shCount=1, size=2, sign=0, same=1, offr=0
-;	.line	137; "laboratorio_1.c"	cod>>=1;
+;	.line	131; "laboratorio_1.c"	cod>>=1;
 	BCF	STATUS,0
-	BANKSEL	r0x103E
-	RRF	r0x103E,F
-	RRF	r0x103F,F
-;	.line	132; "laboratorio_1.c"	for (unsigned int c = 0 ; c < 8 ; c++) {
-	INCF	r0x1040,F
+	BANKSEL	r0x1038
+	RRF	r0x1038,F
+	RRF	r0x1039,F
+;	.line	127; "laboratorio_1.c"	for (unsigned int c = 0 ; c < 8 ; c++) {
+	INCF	r0x103A,F
 	BTFSC	STATUS,2
-	INCF	r0x1041,F
-	GOTO	_00113_DS_
-_00111_DS_:
-;	.line	139; "laboratorio_1.c"	GP2=1;
+	INCF	r0x103B,F
+	GOTO	_00173_DS_
+_00171_DS_:
+;	.line	133; "laboratorio_1.c"	GP2=1;
 	BANKSEL	_GPIObits
 	BSF	_GPIObits,2
-;	.line	140; "laboratorio_1.c"	GP2=0;
+;	.line	134; "laboratorio_1.c"	GP2=0;
 	BCF	_GPIObits,2
-;	.line	141; "laboratorio_1.c"	}
+;	.line	135; "laboratorio_1.c"	}
 	RETURN	
 ; exit point of _send_byte
 
 
 ;	code size estimation:
-;	  441+   78 =   519 instructions ( 1194 byte)
+;	  612+  133 =   745 instructions ( 1756 byte)
 
 	end
