@@ -227,9 +227,10 @@ _main:
 	MOVLW	0x08
 	BANKSEL	_TRISIO
 	MOVWF	_TRISIO
-;	.line	27; "laboratorio_1.c"	GPIO = 0b00000000; //Pines empiezan en bajo
+;	.line	27; "laboratorio_1.c"	GPIO = 0b00100000; //Pines empiezan en bajo
+	MOVLW	0x20
 	BANKSEL	_GPIO
-	CLRF	_GPIO
+	MOVWF	_GPIO
 ;	.line	29; "laboratorio_1.c"	ADCON0=0x00;                // Internal ADC OFF
 	CLRF	_ADCON0
 ;	.line	30; "laboratorio_1.c"	ANSEL=0x00;
@@ -794,7 +795,7 @@ _00279_DS_:
 _00299_DS_:
 	BTFSC	STATUS,0
 	GOTO	_00277_DS_
-;;genSkipc:3307: created from rifx:0x7ffff174bc40
+;;genSkipc:3307: created from rifx:0x7ffcd709fb60
 ;	.line	183; "laboratorio_1.c"	if ( (historial[c] == 0xFF) ) {
 	BANKSEL	r0x102C
 	MOVF	r0x102C,W
@@ -931,7 +932,7 @@ _00214_DS_:
 _00266_DS_:
 	BTFSC	STATUS,0
 	GOTO	_00195_DS_
-;;genSkipc:3307: created from rifx:0x7ffff174bc40
+;;genSkipc:3307: created from rifx:0x7ffcd709fb60
 ;	.line	144; "laboratorio_1.c"	rand+=0x01;
 	BANKSEL	r0x1032
 	INCF	r0x1032,F
@@ -963,7 +964,7 @@ _00195_DS_:
 _00267_DS_:
 	BTFSC	STATUS,0
 	GOTO	_00192_DS_
-;;genSkipc:3307: created from rifx:0x7ffff174bc40
+;;genSkipc:3307: created from rifx:0x7ffcd709fb60
 ;	.line	146; "laboratorio_1.c"	rand = (rand+0x10) & 0xF0;
 	MOVLW	0x10
 	BANKSEL	r0x1032
@@ -1035,23 +1036,23 @@ _00001_DS_:
 	XORLW	0x00
 	BTFSS	STATUS,2
 	GOTO	_00198_DS_
-;	.line	154; "laboratorio_1.c"	GP5=0;
+;	.line	154; "laboratorio_1.c"	GP5=1;
 	BANKSEL	_GPIObits
-	BCF	_GPIObits,5
+	BSF	_GPIObits,5
 ;	.line	155; "laboratorio_1.c"	blink=1;
 	MOVLW	0x01
 	BANKSEL	_blink
 	MOVWF	_blink
 	CLRF	(_blink + 1)
-;	.line	156; "laboratorio_1.c"	return 0x11;
-	MOVLW	0x11
+;	.line	156; "laboratorio_1.c"	return 0x99;
+	MOVLW	0x99
 	MOVWF	STK00
 	MOVLW	0x00
 	GOTO	_00216_DS_
 _00198_DS_:
-;	.line	158; "laboratorio_1.c"	GP5=0;
+;	.line	158; "laboratorio_1.c"	GP5=1;
 	BANKSEL	_GPIObits
-	BCF	_GPIObits,5
+	BSF	_GPIObits,5
 ;	.line	159; "laboratorio_1.c"	blink=0;
 	BANKSEL	_blink
 	CLRF	_blink
@@ -1189,7 +1190,7 @@ _00173_DS_:
 _00186_DS_:
 	BTFSC	STATUS,0
 	GOTO	_00171_DS_
-;;genSkipc:3307: created from rifx:0x7ffff174bc40
+;;genSkipc:3307: created from rifx:0x7ffcd709fb60
 ;	.line	128; "laboratorio_1.c"	GP0=cod & 0x01;
 	BANKSEL	r0x1039
 	MOVF	r0x1039,W
@@ -1233,6 +1234,6 @@ _00171_DS_:
 
 
 ;	code size estimation:
-;	  612+  133 =   745 instructions ( 1756 byte)
+;	  613+  133 =   746 instructions ( 1758 byte)
 
 	end

@@ -24,7 +24,7 @@ unsigned int historial[16]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF, \
 void main(void)
 {
 	TRISIO = 0b00001000; //P0,1,2,3,4 como salidas, P5 como entrada
-	GPIO = 0b00000000; //Pines empiezan en bajo
+	GPIO = 0b00100000; //Pines empiezan en bajo
 
 	ADCON0=0x00;                // Internal ADC OFF
     	ANSEL=0x00;
@@ -151,11 +151,11 @@ unsigned int rand_wait() {
 		if ( ((banderas & 0x01) == 0x00) &&  (GP3==1) && (valido(rand)==1) ) {
 			banderas |= 0x01;
 			if ( (banderas & 0x02) == 0x02 ) {
-				GP5=0;
+				GP5=1;
 				blink=1;
-				return 0x11;
+				return 0x99;
 			}
-			GP5=0;
+			GP5=1;
 			blink=0;
 			return rand;
 		} else if ( ((banderas & 0x01)==0x01) &&  (GP3==0) ) {
