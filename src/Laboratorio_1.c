@@ -2,13 +2,9 @@
 
 #define time 1
 
-/* notes
-1) quitar tabla cod_7seg y guardar valores en la codificacion de las instrucciones
-2) manejar rand en bcd desde el principio
-*/
-
 typedef unsigned int word ;
-word __at 0x2007 __CONFIG = (_CPD_OFF, _CP_OFF, _BOREN_OFF, _MCLRE_OFF, _PWRTE_OFF, _WDTE_OFF) ;
+word __at 0x2007 __CONFIG = (_CPD_OFF, _CP_OFF, _BOREN_OFF, \
+ 			_MCLRE_OFF, _PWRTE_OFF, _WDTE_OFF) ;
 
 void send_byte(unsigned int cod_7seg);
 unsigned int valido(unsigned int valor);
@@ -23,29 +19,16 @@ unsigned int historial[16]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF, \
 
 void main(void)
 {
-	TRISIO = 0b00001000; //P0,1,2,3,4 como salidas, P5 como entrada
-	GPIO = 0b00100000; //Pines empiezan en bajo
-
-	ADCON0=0x00;                // Internal ADC OFF
+	//Inicializar GPIO
+	TRISIO = 0b00001000; //P0,1,2,4,5 como salidas, P3 como entrada
+	GPIO = 0b00000000; //Pines empiezan en bajo
+	ADCON0=0x00;
     	ANSEL=0x00;
 	CMCON0 = 0x07;
 
 	unsigned int tx = 0x00;
 	
-	/*
-	unsigned int cod_7seg[10]={0b11111100,\	//0
-				0b01100000,\ 	//1
-				0b11011010,\	//2
-				0b11110010,\	//3
-				0b01100110,\	//4
-				0b10110110,\	//5
-				0b10111110,\	//6
-				0b11100000,\	//7
-				0b11111110,\	//8
-				0b11100110};	//9
-	*/
 
-    	//Loop forever
     	while ( 1 )
     	{
 
@@ -148,14 +131,15 @@ unsigned int rand_wait() {
 			rand = 0x00;
 		}
 
-		if ( ((banderas & 0x01) == 0x00) &&  (GP3==1) && (valido(rand)==1) ) {
+		if ( ((banderas & 0x01) == 0x00) &&  (GP3==1) \
+					 && (valido(rand)==1) ) {
 			banderas |= 0x01;
 			if ( (banderas & 0x02) == 0x02 ) {
-				GP5=1;
+				GP5=0;
 				blink=1;
 				return 0x99;
 			}
-			GP5=1;
+			GP5=0;
 			blink=0;
 			return rand;
 		} else if ( ((banderas & 0x01)==0x01) &&  (GP3==0) ) {
